@@ -360,7 +360,7 @@ export class SmcService {
 
             const action = () => {
                 return func(...args)
-                    .call()
+                    .call({from : this.address})
                     .then((res: any) => resolve(res))
                     .catch((error: any) => {
                         console.error(error);
@@ -393,7 +393,7 @@ export class SmcService {
                 );
 
             const gas = await func(...args)
-                .estimateGas()
+                .estimateGas({from : this.address})
                 .then((res: number) => +res * 2)
                 .catch((err: any) => {
                     reject(err);

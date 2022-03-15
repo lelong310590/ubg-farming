@@ -76,7 +76,7 @@ const Form: FC = () => {
 					return SmcService.send({
 						contract: SmcService.contractFarmingV2,
 						method: 'farm'
-					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, SmcService.contractUBGToken._decimals), ref)
+					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, SmcService.contractUBGToken._decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
 							// await fetchUserBalance();
 							// await fetchUserStake();
