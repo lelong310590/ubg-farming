@@ -7,11 +7,13 @@ export class StakingServiceV2 {
 			["1", "2", "3"].map(async (value, index) => {
 				const packageRes = await SmcService.call(
 					{
-						contract: SmcService.contractStakingV2,
+						contract: SmcService.contractFarmingV2,
 						method: "getPackInfo",
 					},
 					value
 				);
+
+				console.log('packageRes: ', packageRes)
 
 				const data: StakePackage = {
 					id: `${value}`,
@@ -19,6 +21,11 @@ export class StakingServiceV2 {
 					roi: +packageRes.interest,
 					interest: packageRes.interest,
 					numberOfDays: +packageRes.duration / 86400,
+					interestSec: +packageRes.interestSec / 86400,
+					tokenAddress: packageRes.tokenAddress,
+					minFarm: packageRes.minFarm,
+					farmingType: packageRes.farmingType,
+					endTime: packageRes.endTime*1000
 				  };
 		
 				  return data;
@@ -29,12 +36,24 @@ export class StakingServiceV2 {
 	}
 }
 
+// uint256 id;
+// address tokenAddress; // farming token address
+// uint256 minFarm; // 9 decimals for UBG, 18 for others.
+// uint256 interestSec; // interest per second, 9 decimals
+// uint256 farmingType; // 0: has end, 1: endless
+// uint256 endTime; // time to end, 0 mean endless
+
 export interface StakePackage {
 	id: any;
 	name: any;
 	roi: number;
 	interest: number,
 	numberOfDays: number;
+	interestSec: number,
+	tokenAddress: number,
+	minFarm: number,
+	farmingType: number,
+	endTime: number
 }
 
 export interface UserStake {

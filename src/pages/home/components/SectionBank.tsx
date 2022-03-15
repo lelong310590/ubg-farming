@@ -9,7 +9,7 @@ import { Button, Icon, InputNumber, Message } from '../../../components'
 import { InputTagSelect } from '../../../components/input/tag-select'
 import { DateTimeUtils, InputWraper, NumberUtils, useForm } from '../../../modules'
 import { AppService, ESMCStatus, SmcService } from '../../../services'
-import { StakePackage, StakingService, UserStake } from '../../../services/staking'
+import { StakePackage, UserStake } from '../../../services/staking'
 import { StakingServiceV2 } from '../../../services/staking/stakingv2.service'
 
 export const SectionBank: FC = () => {

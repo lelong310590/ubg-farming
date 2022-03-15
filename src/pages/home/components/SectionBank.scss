@@ -1,130 +1,218 @@
 @import "../../../module.variables.scss";
 
 .HomePage {
-  .SectionBank {
-    background: #f8f9ff;
-
-    .block {
-      @include flexBox;
-      margin-bottom: 1.5rem;
-    }
-
-    .sectionTitle,
-    .sectionExcerpt {
-      text-align: center;
-    }
-
-    .numberReports {
-      .item {
-        text-align: center;
-        border: 1px solid $borderColor;
-        padding: 15px;
-        border-radius: $borderRadius;
-        background: transparent;
-        position: relative;
-        margin-bottom: 20px;
-        background: $white;
-
-        .label {
-          color: $grey;
-          margin-bottom: 5px;
-        }
-
-        .value {
-          font-weight: 500;
-          color: $primary;
-          font-size: 1.4em;
-        }
-      }
-    }
-
-    form {
-      border: 1px solid $primary;
-      padding: 20px;
-      border-radius: $borderRadius;
-      box-shadow: 0px 0px 15px rgba($color: $primary, $alpha: 0.5);
-      margin: 0 20px;
-      background: $white;
-
-      > .head {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-
-        .title {
-          font-size: 1.4em;
-          color: $primary;
-          font-weight: 500;
-        }
-      }
-
-      .InputWraper {
-        &.hideBorder {
-          .input {
-            border: none;
-          }
-        }
-
-        .input {
-          width: 100%;
-        }
-      }
-
-      .note {
-        margin-bottom: 1rem;
-        text-align: center;
-      }
-
-      .cta {
-        text-align: center;
-      }
-    }
-
-    .UserStake {
-      .title {
-        font-size: 1.2rem;
-        padding-bottom: 1rem;
-      }
-
-      .content {
-        border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
-        border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
-        padding: 0.7rem 0;
-        margin-bottom: 1rem;
-
-        .rowInfo {
-          padding: 0.8rem 0;
-          display: flex;
-          justify-content: space-between;
-
-          .value {
-            font-weight: 500;
-            font-size: 1.1rem;
-            text-align: right;
-
-            .time {
-              font-size: 0.85rem;
-              color: $warning;
-            }
-          }
-        }
-      }
-    }
-  }
+	.SectionBank {
+		background: #f8f9ff;
+		
+		.block {
+			@include flexBox;
+			margin-bottom: 1.5rem;
+		}
+		
+		.sectionTitle,
+		.sectionExcerpt {
+			text-align: center;
+		}
+		
+		.numberReports {
+			.item {
+				text-align: center;
+				border: 1px solid $borderColor;
+				padding: 15px;
+				border-radius: $borderRadius;
+				background: transparent;
+				position: relative;
+				margin-bottom: 20px;
+				background: $white;
+				
+				.label {
+					color: $grey;
+					margin-bottom: 5px;
+				}
+				
+				.value {
+					font-weight: 500;
+					color: $primary;
+					font-size: 1.4em;
+				}
+			}
+		}
+		
+		form {
+			margin: 0 20px;
+			> .head {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 15px;
+				
+				.title {
+					font-size: 1.4em;
+					color: $primary;
+					font-weight: 500;
+				}
+			}
+			
+			.InputWraper {
+				&.hideBorder {
+					.input {
+						border: none;
+					}
+				}
+				
+				.input {
+					width: 100%;
+				}
+			}
+			
+			.note {
+				margin-bottom: 1rem;
+				text-align: center;
+			}
+			
+			.cta {
+				text-align: center;
+			}
+		}
+		
+		.UserStake {
+			.title {
+				font-size: 1.2rem;
+				padding-bottom: 1rem;
+			}
+			
+			.content {
+				border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
+				border-bottom: 1px solid rgba($color: #000000, $alpha: 0.1);
+				padding: 0.7rem 0;
+				margin-bottom: 1rem;
+				
+				.rowInfo {
+					padding: 0.8rem 0;
+					display: flex;
+					justify-content: space-between;
+					
+					.value {
+						font-weight: 500;
+						font-size: 1.1rem;
+						text-align: right;
+						
+						.time {
+							font-size: 0.85rem;
+							color: $warning;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 .Mobile {
-  .HomePage {
-    .SectionBank {
-      form {
-        > .head {
-          flex-direction: column;
+	.HomePage {
+		.SectionBank {
+			form {
+				> .head {
+					flex-direction: column;
+					
+					.title {
+						margin-bottom: 15px;
+					}
+				}
+			}
+		}
+	}
+}
 
-          .title {
-            margin-bottom: 15px;
-          }
-        }
-      }
-    }
-  }
+.farming-pool-wrapper {
+	border: 1px solid $primary;
+	padding: 20px;
+	border-radius: $borderRadius;
+	background: $white;
+	img {
+		display: block;
+		margin: 15px auto;
+		max-width: 100px;
+	}
+	.farming-pool-info {
+		.farming-pool-title {
+			text-align: center;
+			font-weight: 700;
+			font-size: 25px;
+			margin-top: 25px
+		}
+		.farming-pool-info-item {
+			padding: 15px 0;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid #ccc;
+		}
+	}
+}
+
+.farming-pool-action {
+	margin-top: 15px;
+	text-align: center;
+}
+
+.pool-item {
+	border: 1px solid $primary;
+	padding: 20px;
+	border-radius: $borderRadius;
+	background: $white;
+}
+
+.pool-background {
+	background: rgba(0,0,0, .7);
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+	.pool-item {
+		background: #fff;
+		padding: 20px;
+		border-radius: $borderRadius;
+		background: $white;
+		width: 100%;
+		max-width: 550px;
+		.pool-item-title {
+			text-align: center;
+			font-weight: 700;
+			font-size: 18px;
+			margin-bottom: 20px;
+		}
+		.pool-item-info {
+			img {
+				max-width: 100px;
+				display: block;
+				margin: 0 auto
+			}
+		}
+		.pool-item-info-row {
+			padding: 15px 0;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid #ccc;
+		}
+		.pool-item-action {
+			padding: 15px 0;
+		}
+		.pool-item-action-button {
+			text-align: center;
+			button {
+				margin: 0 15px;
+				&.close-button {
+					background: #eee;
+					color: #222;
+					border-color: #eee;
+				}
+			}
+		}
+	}
 }

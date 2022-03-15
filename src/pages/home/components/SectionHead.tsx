@@ -1,8 +1,5 @@
 import { FC } from 'react'
 import { Element } from 'react-scroll'
-// import { getLocaleKey } from '../../../AppLanguages';
-import { useSelector } from '../../../AppStores'
-// import { Icon } from '../../../components';
 
 export const SectionHead: FC = () => {
   return (
