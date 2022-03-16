@@ -309,7 +309,7 @@ const Form: FC = () => {
 										<img src="./images/pool.png" alt="" className="img-fluid"/>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} UBG</div>
+											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'}</div>
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
