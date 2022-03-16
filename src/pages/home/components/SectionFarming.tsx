@@ -228,7 +228,7 @@ const Form: FC = () => {
 	const claim = async () => {
 		setIsClaiming(true);
 
-		await SmcService.call({
+		await SmcService.send({
 			contract: SmcService.contractFarmingV2,
 			method: 'claim',
 		}, selectedPool.id)
