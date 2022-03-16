@@ -72,7 +72,6 @@ const Form: FC = () => {
 			// }
 		},
 		onSubmit: async ({ values }) => {
-
 			console.log("select pool: ", selectedPool);
 			let sendingAmount;
 			let fromAddress;
@@ -102,6 +101,7 @@ const Form: FC = () => {
 						.then(async (res) => {
 							// await fetchUserBalance();
 							// await fetchUserStake();
+							fetchCalculateFarm(selectedPool.id)
 							setShowPoolDetail(false)
 							SmcService.transactionSuccessAlert(res, 'Farm successfully.');
 						})
@@ -247,6 +247,7 @@ const Form: FC = () => {
 			.then(async res => {
 				console.log('claim: ', res)
 				setIsClaiming(false);
+				fetchCalculateFarm(selectedPool.id)
 				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
 			})
 			.catch(async (err) => {
@@ -275,7 +276,6 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
-		console.log('selectedPool: ', packages[selectedPoolIdx])
 		fetchCalculateFarm(id)
 	}
 
