@@ -220,6 +220,14 @@ export class SmcService {
         }
     }
 
+    static async liquidityContract(address: string) {
+        return new this.web3.eth.Contract(
+            this.configs["SMC_LIQUIDITY_TOKEN_ABI"],
+            address,
+            {from: this.address}
+        );
+    }
+
     static async fetchPools(store: Store) {
         try {
             store.dispatch({type: SET_SMC_POOLS_FETCHING});

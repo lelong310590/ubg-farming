@@ -72,11 +72,22 @@ const Form: FC = () => {
 			// }
 		},
 		onSubmit: async ({ values }) => {
-
-			let sendingAmount = checkTypeOfToken ? values.amount * 1e9 : values.amount * 1e18
-
-			let fromAddress = SmcService.configs.SMC_FARMING_V2_ADDRESS
-			let toContract = checkTypeOfToken ? SmcService.contractUBGToken : SmcService.contractLiquidity
+			console.log("select pool: ", selectedPool);
+			let sendingAmount;
+			let fromAddress;
+			let toContract;
+			let decimals = 9;
+			if (selectedPool.tokenAddress == SmcService.configs.SMC_UBG_TOKEN_ADDRESS) {
+				sendingAmount = values.amount * 1e9
+				fromAddress = SmcService.configs.SMC_FARMING_V2_ADDRESS
+				toContract = SmcService.contractUBGToken;
+				decimals = SmcService.contractUBGToken._decimals;
+			} else {
+				sendingAmount = values.amount * 1e18
+				fromAddress = SmcService.configs.SMC_FARMING_V2_ADDRESS
+				toContract = await SmcService.liquidityContract(selectedPool.tokenAddress);
+				decimals = 18;
+			}
 
 			await SmcService.requestApprove({
 				fromAddress,
@@ -86,7 +97,7 @@ const Form: FC = () => {
 					return SmcService.send({
 						contract: SmcService.contractFarmingV2,
 						method: 'farm'
-					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, SmcService.contractUBGToken._decimals), ref ?? '0x0000000000000000000000000000000000000000')
+					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
 							// await fetchUserBalance();
 							// await fetchUserStake();
