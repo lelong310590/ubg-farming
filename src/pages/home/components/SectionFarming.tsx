@@ -207,7 +207,7 @@ const Form: FC = () => {
 			case '3':
 				return 'Farm UBGBNB'
 			default:
-				return ''
+				return 'Test'
 		}
 	}
 
@@ -351,7 +351,9 @@ const Form: FC = () => {
 															return (
 																<Fragment>
 																	<Button isLoading={isSubmitting} type="submit" label="Continue Farm" />
-																	<Button className="claim-button" isLoading={isClaiming} onClick={() => claim()} type="button" label="Claim" />
+																	{checkPoolTime &&
+																		<Button className="claim-button" isLoading={isClaiming} onClick={() => claim()} type="button" label="Claim" />
+																	}
 																</Fragment>
 															)
 														} else {
