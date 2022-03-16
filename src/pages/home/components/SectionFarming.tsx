@@ -73,11 +73,14 @@ const Form: FC = () => {
 		},
 		onSubmit: async ({ values }) => {
 
-			let sendingAmount = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? values.amount : values.amount * 1e18
+			let sendingAmount = checkTypeOfToken ? values.amount : values.amount * 1e18
+
+			let fromAddress = SmcService.configs.SMC_FARMING_V2_ADDRESS
+			let toContract = checkTypeOfToken ? SmcService.contractUBGToken : SmcService.contractLiquidity
 
 			await SmcService.requestApprove({
-				fromAddress: SmcService.configs.SMC_FARMING_V2_ADDRESS,
-				toContract: SmcService.contractUBGToken,
+				fromAddress,
+				toContract
 			}, sendingAmount)
 				.then(async () => {
 					return SmcService.send({
@@ -87,28 +90,13 @@ const Form: FC = () => {
 						.then(async (res) => {
 							// await fetchUserBalance();
 							// await fetchUserStake();
-							console.log(res)
 							setShowPoolDetail(false)
 							SmcService.transactionSuccessAlert(res, 'Farm successfully.');
 						})
 						.catch(async (err) => {
-							console.log('err: ', err)
 							setShowPoolDetail(false)
 							SmcService.transactionErrorAlert(err, 'Farm failed.');
 						})
-
-					// return SmcService.send({
-					// 	contract: SmcService.contractStakingV2,
-					// 	method: 'stake'
-					// }, NumberUtils.cryptoConvert('encode', values.amount, SmcService.contractUBGToken._decimals), values.packageId)
-					// 	.then(async (res) => {
-					// 		await fetchUserBalance();
-					// 		await fetchUserStake();
-					// 		SmcService.transactionSuccessAlert(res, 'Stake successfully.');
-					// 	})
-					// 	.catch((err) => {
-					// 		SmcService.transactionErrorAlert(err, 'Stake failed.');
-					// 	})
 				})
 				.catch(() => {
 					return AppService.createErrNoti('Approve amount failed.');
@@ -132,10 +120,10 @@ const Form: FC = () => {
 			contract: SmcService.contractUBGToken,
 			method: 'balanceOf',
 		}, SmcService.address)
-			.then(res => {
+			.then(async res => {
 				setBalance(+NumberUtils.cryptoConvert('decode', +res, SmcService.contractUBGToken._decimals));
 			})
-			.catch((err) => {
+			.catch(async (err) => {
 				console.log('err fetchUserBalance: ', err)
 				return false;
 			});
@@ -210,26 +198,6 @@ const Form: FC = () => {
 		}
 	}, [smc.status])
 
-
-	const handleClaim = async (packageId) => {
-		setIsClaiming(true);
-
-		await SmcService.send({
-			contract: SmcService.contractStakingV2,
-			method: 'claim'
-		}, packageId)
-			.then(async res => {
-				await fetchUserBalance();
-				await fetchUserStake();
-				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
-			})
-			.catch(err => {
-				SmcService.transactionErrorAlert(err, 'Claim failed.');
-			})
-
-		setIsClaiming(false);
-	}
-
 	const getNameById = (id) => {
 		switch (id) {
 			case '1':
@@ -254,13 +222,36 @@ const Form: FC = () => {
 			":"+date.getSeconds();
 	}
 
+	/**
+	 * func claim
+	 */
+	const claim = async () => {
+		setIsClaiming(true);
+
+		await SmcService.call({
+			contract: SmcService.contractFarmingV2,
+			method: 'claim',
+		}, selectedPool.id)
+			.then(async res => {
+				console.log('res: ', res)
+				setShowPoolDetail(false)
+				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
+			})
+			.catch(async (err) => {
+				console.log('err: ', err)
+				SmcService.transactionErrorAlert(err, 'Claim failed.');
+			});
+
+		setIsClaiming(false);
+	}
+
 	const fetchCalculateFarm = async (packageId) => {
 		await SmcService.call({
 			contract: SmcService.contractFarmingV2,
 			method: 'calculateFarm',
 		}, SmcService.address, packageId)
 			.then(res => {
-				//console.log('calculateFarm: ', res)
+				console.log('calculateFarm: ', res)
 				setCalculateFarm(res)
 			})
 			.catch((err) => {
@@ -273,12 +264,18 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
+		console.log('selectedPool: ', packages[selectedPoolIdx])
 		fetchCalculateFarm(id)
 	}
 
 	const closePoolDetail = () => {
 		setShowPoolDetail(false)
 		setSelectedPool(null)
+	}
+
+	const checkTypeOfToken = () => {
+		//true mean UBG, false mean luquid
+		return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === selectedPool.tokenAddress
 	}
 
 	return <form onSubmit={handleSubmit}>
@@ -312,7 +309,7 @@ const Form: FC = () => {
 										<img src="./images/pool.png" alt="" className="img-fluid"/>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === selectedPool.tokenAddress ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} UBG</div>
+											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} UBG</div>
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
@@ -322,6 +319,22 @@ const Form: FC = () => {
 											<div className="farming-pool-label">Reward: </div>
 											<div className="farming-pool-value">{selectedPool.interestSec} / day</div>
 										</div>
+										{calculateFarm !== null &&
+											<Fragment>
+												{calculateFarm[0] > 0 &&
+													<Fragment>
+														<div className="pool-item-info-row pool-award">
+															<div className="farming-pool-label">Intersec / seconds: </div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[0] / 1e9 : calculateFarm[0] / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'} / seconds</div>
+														</div>
+														<div className="pool-item-info-row pool-award">
+															<div className="farming-pool-label">Total Farmed Token: </div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[1] / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'}</div>
+														</div>
+													</Fragment>
+												}
+											</Fragment>
+										}
 										<div className="pool-item-action">
 											<InputWraper inputProps={inputProps.amount} component={InputNumber} />
 											<div className="pool-item-action-button">
@@ -329,18 +342,18 @@ const Form: FC = () => {
 													if (smc.error) return
 													if (smc.status === ESMCStatus.NONE) return;
 													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => SmcService.handleConnectWallet()} />
-													if (userStake) {
-														const isClaimActive = new Date(now).getTime() >= new Date(userStake.payAt).getTime();
-														return <Button label="Claim" isLoading={isClaiming} onClick={handleClaim(1)} disabled={!isClaimActive} />;
-													}
 
-													if (true) {
-														return (
-															<Fragment>
-																<Button isLoading={isSubmitting} type="submit" label="Farm Again" />
-																<Button className="close-button" isLoading={isSubmitting} type="button" label="Claim" />
-															</Fragment>
-														)
+													if (calculateFarm !== null) {
+														if (calculateFarm[0] > 0) {
+															return (
+																<Fragment>
+																	<Button isLoading={isSubmitting} type="submit" label="Farm Again" />
+																	<Button className="claim-button" isLoading={isClaiming} onClick={() => claim()} type="button" label="Claim" />
+																</Fragment>
+															)
+														} else {
+															return <Button isLoading={isSubmitting} type="submit" label="Go Farm!" />
+														}
 													} else {
 														return <Button isLoading={isSubmitting} type="submit" label="Go Farm!" />
 													}

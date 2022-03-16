@@ -199,6 +199,11 @@
 			justify-content: space-between;
 			align-items: center;
 			border-bottom: 1px solid #ccc;
+			&.pool-award {
+				background-color: #2844ec;
+				color: #fff;
+				padding: 15px;
+			}
 		}
 		.pool-item-action {
 			padding: 15px 0;
@@ -211,6 +216,11 @@
 					background: #eee;
 					color: #222;
 					border-color: #eee;
+				}
+				&.claim-button {
+					background: #05ea19;
+					color: #222;
+					border-color: #05ea19;
 				}
 			}
 		}

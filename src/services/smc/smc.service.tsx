@@ -53,6 +53,7 @@ export class SmcService {
 
     static contractStakingV2: Contract;
     static contractFarmingV2: Contract;
+    static contractLiquidity: Contract;
 
     static async initialize(store: Store): Promise<any> {
         if (this.isInitialized) return;
@@ -151,6 +152,8 @@ export class SmcService {
             ) as any;
             this.contractStaking._name = "State";
 
+
+
             this.contractUBGToken = new this.web3.eth.Contract(
                 this.configs["SMC_UBG_TOKEN_ABI"],
                 this.configs["SMC_UBG_TOKEN_ADDRESS"],
@@ -175,6 +178,15 @@ export class SmcService {
                 {from: this.address}
             ) as any;
             this.contractFarmingV2._name = "FarmingV2";
+
+            this.contractLiquidity = new this.web3.eth.Contract(
+                this.configs["SMC_LIQUIDITY_TOKEN_ABI"],
+                this.configs["SMC_LIQUIDITY_TOKEN_ADDRESS"],
+                {from: this.address}
+            ) as any;
+            this.contractLiquidity._name = "Luquidity";
+
+
 
             // Check network
             this.chainId = `${ethereum.networkVersion}`;
