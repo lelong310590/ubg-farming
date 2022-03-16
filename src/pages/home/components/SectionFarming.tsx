@@ -233,16 +233,15 @@ const Form: FC = () => {
 			method: 'claim',
 		}, selectedPool.id)
 			.then(async res => {
-				console.log('res: ', res)
-				setShowPoolDetail(false)
+				console.log('claim: ', res)
+				setIsClaiming(false);
 				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
 			})
 			.catch(async (err) => {
 				console.log('err: ', err)
+				setIsClaiming(false);
 				SmcService.transactionErrorAlert(err, 'Claim failed.');
 			});
-
-		setIsClaiming(false);
 	}
 
 	const fetchCalculateFarm = async (packageId) => {
@@ -342,12 +341,16 @@ const Form: FC = () => {
 													if (smc.error) return
 													if (smc.status === ESMCStatus.NONE) return;
 													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => SmcService.handleConnectWallet()} />
-
+													let checkPoolTime = new Date().getTime() > selectedPool.endTime
+													console.log('new Date: ', new Date().getTime())
+													console.log('selectedPool.endTime: ', selectedPool.endTime)
+													console.log('calculateFarme: ', calculateFarm)
+													console.log('selectedPool: ', selectedPool)
 													if (calculateFarm !== null) {
 														if (calculateFarm[0] > 0) {
 															return (
 																<Fragment>
-																	<Button isLoading={isSubmitting} type="submit" label="Farm Again" />
+																	<Button isLoading={isSubmitting} type="submit" label="Continue Farm" />
 																	<Button className="claim-button" isLoading={isClaiming} onClick={() => claim()} type="button" label="Claim" />
 																</Fragment>
 															)
