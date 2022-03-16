@@ -40,12 +40,16 @@ const Form: FC = () => {
 	const [ref, setRef] = useState('0x0000000000000000000000000000000000000000')
 	const [selectedPool, setSelectedPool] = useState(null as any)
 	const [showPoolDetail, setShowPoolDetail] = useState(false);
+	const [calculateFarm, setCalculateFarm] = useState(null as any)
 
 	const validateAmount = (value: number) => {
 		if (value && typeof balance === 'number') {
 			if (value > balance) return 'Your balance not enough';
-			if (value < selectedPool.minFarm / 1e9) {
-				return 'Min deposit is: ' + selectedPool.minFarm / 1e9 + ' UBG'
+
+			let compareValue = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
+
+			if (value < compareValue) {
+				return 'Min deposit is: ' + compareValue + ' UBG'
 			}
 		}
 	}
@@ -68,10 +72,13 @@ const Form: FC = () => {
 			// }
 		},
 		onSubmit: async ({ values }) => {
+
+			let sendingAmount = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? values.amount : values.amount * 1e18
+
 			await SmcService.requestApprove({
 				fromAddress: SmcService.configs.SMC_FARMING_V2_ADDRESS,
 				toContract: SmcService.contractUBGToken,
-			}, values.amount)
+			}, sendingAmount)
 				.then(async () => {
 					return SmcService.send({
 						contract: SmcService.contractFarmingV2,
@@ -194,7 +201,7 @@ const Form: FC = () => {
 			interval2 = setIntervalAsync(async () => {
 				await fetchUserBalance();
 				// await fetchUserStake();
-			}, 1000);
+			}, 5000);
 		}
 
 		return () => {
@@ -239,20 +246,34 @@ const Form: FC = () => {
 	const showHumanTime = (timestamp) => {
 		let date = new Date(timestamp);
 
-		let showDate = date.getDate()+
+		return date.getDate()+
 			"/"+(date.getMonth()+1)+
 			"/"+date.getFullYear()+
 			" "+date.getHours()+
 			":"+date.getMinutes()+
 			":"+date.getSeconds();
+	}
 
-		return showDate
+	const fetchCalculateFarm = async (packageId) => {
+		await SmcService.call({
+			contract: SmcService.contractFarmingV2,
+			method: 'calculateFarm',
+		}, SmcService.address, packageId)
+			.then(res => {
+				//console.log('calculateFarm: ', res)
+				setCalculateFarm(res)
+			})
+			.catch((err) => {
+				console.log('err fetchUserBalance: ', err)
+				return false;
+			});
 	}
 
 	const joinPool = (id) => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
+		fetchCalculateFarm(id)
 	}
 
 	const closePoolDetail = () => {
@@ -291,7 +312,7 @@ const Form: FC = () => {
 										<img src="./images/pool.png" alt="" className="img-fluid"/>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{selectedPool.minFarm / 1e9} UBG</div>
+											<div className="pool-item-info-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === selectedPool.tokenAddress ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} UBG</div>
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
@@ -312,7 +333,17 @@ const Form: FC = () => {
 														const isClaimActive = new Date(now).getTime() >= new Date(userStake.payAt).getTime();
 														return <Button label="Claim" isLoading={isClaiming} onClick={handleClaim(1)} disabled={!isClaimActive} />;
 													}
-													return <Button isLoading={isSubmitting} type="submit" label="Go Farm!" />
+
+													if (true) {
+														return (
+															<Fragment>
+																<Button isLoading={isSubmitting} type="submit" label="Farm Again" />
+																<Button className="close-button" isLoading={isSubmitting} type="button" label="Claim" />
+															</Fragment>
+														)
+													} else {
+														return <Button isLoading={isSubmitting} type="submit" label="Go Farm!" />
+													}
 												}()}
 
 												<Button className="close-button" onClick={() => closePoolDetail()} type="button" label="Close" />
@@ -336,7 +367,7 @@ const Form: FC = () => {
 											</div>
 											<div className="farming-pool-info-item">
 												<div className="farming-pool-label">Min Deposit: </div>
-												<div className="farming-pool-value">{p.minFarm / 1e9} UBG</div>
+												<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} UBG</div>
 											</div>
 											<div className="farming-pool-info-item">
 												<div className="farming-pool-label">End Time: </div>

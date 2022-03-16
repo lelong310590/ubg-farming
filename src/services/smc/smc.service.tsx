@@ -444,7 +444,7 @@ export class SmcService {
     static async requestApprove(
         contracts: {
             fromAddress: string;
-            toContract: Contract;
+            toContract: Contract | any;
         },
         amount: number,
         decimals = 18

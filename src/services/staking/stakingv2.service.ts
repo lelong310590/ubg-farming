@@ -1,50 +1,59 @@
-import {NumberUtils} from "../../modules";
 import {SmcService} from "../smc";
 
 export class StakingServiceV2 {
-  static async fetchPackages(): Promise<StakePackage[]> {
-    const packages = await Promise.all(
-      ["1", "2", "3"].map(async (value, index) => {
-        const packageRes = await SmcService.call(
-          {
-            contract: SmcService.contractFarmingV2,
-            method: "getPackInfo",
-          },
-          value
+    static async fetchPackages(): Promise<StakePackage[]> {
+        const packages = await Promise.all(
+            ["1", "2", "3"].map(async (value, index) => {
+                const packageRes = await SmcService.call(
+                    {
+                        contract: SmcService.contractFarmingV2,
+                        method: "getPackInfo",
+                    },
+                    value
+                );
+
+                console.log("packageRes: ", packageRes);
+
+                const data: StakePackage = {
+                    id: `${value}`,
+                    name: packageRes.duration / 86400 + " days",
+                    roi: +packageRes.interest,
+                    interest: packageRes.interest,
+                    numberOfDays: +packageRes.duration / 86400,
+                    interestSec: +packageRes.interestSec * 86400,
+                    tokenAddress: packageRes.tokenAddress,
+                    minFarm: packageRes.minFarm,
+                    farmingType: packageRes.farmingType,
+                    endTime: packageRes.endTime * 1000,
+                };
+
+                return data;
+            })
         );
 
-        console.log("packageRes: ", packageRes);
+        return packages.filter((v) => !["1 months"].includes(v.name));
+    }
 
-        const data: StakePackage = {
-          id: `${value}`,
-          name: packageRes.duration / 86400 + " days",
-          roi: +packageRes.interest,
-          interest: packageRes.interest,
-          numberOfDays: +packageRes.duration / 86400,
-          interestSec: +packageRes.interestSec / 86400,
-          tokenAddress: packageRes.tokenAddress,
-          minFarm: packageRes.minFarm,
-          farmingType: packageRes.farmingType,
-          endTime: packageRes.endTime * 1000,
+    /**
+     *
+     * @param address
+     * @param packageId
+     */
+    static fetchCalculateFarm = async (address: string, packageId: number) : Promise<CalculateFarmPackage> => {
+
+        const calculateFarm = await SmcService.call(
+            {
+                contract: SmcService.contractFarmingV2,
+                method: 'calculateFarm',
+            }, address, packageId
+        );
+
+        return {
+            currentInterest: calculateFarm[0],
+            totalFarm: calculateFarm[1]
         };
+    }
 
-        return data;
-      })
-    );
-
-    const packageRes2 = await SmcService.call(
-      {
-        contract: SmcService.contractFarmingV2,
-        method: "calculateFarm",
-      },
-      "0xB2a03113cA6aED1c5d9b37Cc1c58d67400208860",
-      1
-    );
-
-    console.log("packageRes2 calculateFarm: ", packageRes2);
-
-    return packages.filter((v) => !["1 months"].includes(v.name));
-  }
 }
 
 // uint256 id;
@@ -55,21 +64,26 @@ export class StakingServiceV2 {
 // uint256 endTime; // time to end, 0 mean endless
 
 export interface StakePackage {
-  id: any;
-  name: any;
-  roi: number;
-  interest: number;
-  numberOfDays: number;
-  interestSec: number;
-  tokenAddress: number;
-  minFarm: number;
-  farmingType: number;
-  endTime: number;
+    id: any;
+    name: any;
+    roi: number;
+    interest: number;
+    numberOfDays: number;
+    interestSec: number;
+    tokenAddress: number;
+    minFarm: number;
+    farmingType: number;
+    endTime: number;
+}
+
+export interface CalculateFarmPackage {
+    currentInterest: number;
+    totalFarm: number
 }
 
 export interface UserStake {
-  initial: number;
-  reward: number;
-  payAt: Date;
-  startAt: Date;
+    initial: number;
+    reward: number;
+    payAt: Date;
+    startAt: Date;
 }
