@@ -34,8 +34,9 @@ const Form: FC = () => {
 	const [isFetched, setIsFetched] = useState(false);
 	const [balance, setBalance] = useState(null as null | number);
 	const [packages, setPackages] = useState(null as null | StakePackage[]);
-	const [userStake, setUserStake] = useState(null as null | UserStake);
 	const [isClaiming, setIsClaiming] = useState(false);
+	const [isRedeeming, setIsRedeeming] = useState(false);
+	const [redeemValue, setRedeemValue] = useState(0)
 	const [now, setNow] = useState(new Date());
 	const [ref, setRef] = useState('0x0000000000000000000000000000000000000000')
 	const [selectedPool, setSelectedPool] = useState(null as any)
@@ -44,7 +45,8 @@ const Form: FC = () => {
 
 	const validateAmount = (value: number) => {
 		if (value && typeof balance === 'number') {
-			if (value > balance) return 'Your balance not enough';
+			let compareBalance = checkTypeOfToken() ? balance : balance;
+			if (value > compareBalance) return 'Your balance not enough';
 
 			let compareValue = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
 
@@ -52,6 +54,15 @@ const Form: FC = () => {
 				return 'Min deposit is: ' + compareValue + ' UBG'
 			}
 		}
+	}
+
+	const handleChangeRedeem = (e) => {
+		setRedeemValue(e.target.value)
+	}
+
+	const validateRedeem = () => {
+		let compareValue = checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[2] / 1e18;
+		return redeemValue <= compareValue;
 	}
 
 	const { handleSubmit, isSubmitting, inputProps, values } = useForm({
@@ -99,7 +110,7 @@ const Form: FC = () => {
 						method: 'farm'
 					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
-							// await fetchUserBalance();
+							await fetchUserBalance();
 							// await fetchUserStake();
 							fetchCalculateFarm(selectedPool.id)
 							setShowPoolDetail(false)
@@ -128,12 +139,19 @@ const Form: FC = () => {
 
 	// get current user balance
 	const fetchUserBalance = async () => {
+
+		let contract = checkTypeOfToken() ? SmcService.contractUBGToken : SmcService.contractLiquidity
+		let decimals = checkTypeOfToken() ? SmcService.contractUBGToken._decimals : 18;
+
 		await SmcService.call({
-			contract: SmcService.contractUBGToken,
+			contract: contract,
 			method: 'balanceOf',
 		}, SmcService.address)
 			.then(async res => {
-				setBalance(+NumberUtils.cryptoConvert('decode', +res, SmcService.contractUBGToken._decimals));
+				console.log('balance: ', res)
+				console.log('ubg: ', SmcService.configs.SMC_UBG_TOKEN_ADDRESS)
+				console.log('selected: ', selectedPool)
+				setBalance(+NumberUtils.cryptoConvert('decode', +res, decimals));
 			})
 			.catch(async (err) => {
 				console.log('err fetchUserBalance: ', err)
@@ -234,6 +252,34 @@ const Form: FC = () => {
 			":"+date.getSeconds();
 	}
 
+	const redeem = async () => {
+		setIsRedeeming(true);
+
+		let amount = checkTypeOfToken() ? redeemValue * 1e9 : redeemValue * 1e18;
+
+		if (validateRedeem()) {
+			await SmcService.send({
+				contract: SmcService.contractFarmingV2,
+				method: 'redeem'
+			}, selectedPool.id, amount)
+				.then(async res => {
+					setIsRedeeming(false);
+					fetchCalculateFarm(selectedPool.id)
+					SmcService.transactionSuccessAlert(res, 'Redeem successfully.');
+				})
+				.catch(async (err) => {
+					console.log('err: ', err)
+					setIsRedeeming(false);
+					SmcService.transactionErrorAlert(err, 'Redeem failed.');
+				});
+		} else {
+			let compareValue = checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[2] / 1e18;
+			let label = checkTypeOfToken() ? ' UBG' : ' Token';
+			alert('Max amount to redeem is: ' + compareValue + label)
+			setIsRedeeming(false);
+		}
+	}
+
 	/**
 	 * func claim
 	 */
@@ -276,6 +322,7 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
+		fetchUserBalance()
 		fetchCalculateFarm(id)
 	}
 
@@ -286,7 +333,21 @@ const Form: FC = () => {
 
 	const checkTypeOfToken = () => {
 		//true mean UBG, false mean luquid
-		return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === selectedPool.tokenAddress
+		if (selectedPool !== null) {
+			return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === selectedPool.tokenAddress
+		} else {
+			return true
+		}
+	}
+
+	const showUserBalance = () => {
+		if (balance === null) {
+			return '--'
+		} else {
+			let decimals = checkTypeOfToken() ? 9 : 18;
+			let label = checkTypeOfToken() ? ' UBG' : ' Token';
+			return balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: decimals }) + label
+		}
 	}
 
 	return <form onSubmit={handleSubmit}>
@@ -318,6 +379,11 @@ const Form: FC = () => {
 									<div className="pool-item-title">Pool {getNameById(selectedPool.id)} Info</div>
 									<div className="pool-item-info">
 										<img src="./images/pool.png" alt="" className="img-fluid"/>
+										<div className="UserBalance pool-item-user-balance">
+											<span className="icon"><Icon.Wallet /></span>
+											<span className="label">Your balance:</span>
+											<span className="value">{showUserBalance()}</span>
+										</div>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
 											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'}</div>
@@ -325,10 +391,6 @@ const Form: FC = () => {
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
 											<div className="farming-pool-value">{selectedPool.endTime > 0 ? showHumanTime(selectedPool.endTime) : 'Endless'}</div>
-										</div>
-										<div className="pool-item-info-row">
-											<div className="farming-pool-label">Reward: </div>
-											<div className="farming-pool-value">{selectedPool.interestSec} / day</div>
 										</div>
 										{calculateFarm !== null &&
 											<Fragment>
@@ -379,6 +441,22 @@ const Form: FC = () => {
 												<Button className="close-button" onClick={() => closePoolDetail()} type="button" label="Close" />
 											</div>
 										</div>
+
+										{SmcService.address === '0x5d71946037e314FdCCdCb6656d0DDc417Aa2044E' &&
+											<div className="pool-items-action redeem-action">
+												<div className="InputWraper"><label htmlFor="amount">Enter your amount to redeem </label><br/>
+													<div className="inputSection">
+														<div className="input">
+															<input inputMode="numeric" type="text" value={redeemValue} onChange={(e) => handleChangeRedeem(e)}/>
+														</div>
+													</div>
+												</div>
+
+												<div className="redeem-button">
+													<Button isLoading={isRedeeming} onClick={() => redeem()} type="button" label="Redeem" />
+												</div>
+											</div>
+										}
 									</div>
 								</div>
 							</div>

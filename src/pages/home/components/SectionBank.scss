@@ -227,3 +227,18 @@
 		}
 	}
 }
+
+.pool-item-user-balance {
+	margin: 15px 0;
+	justify-content: center;
+}
+
+.redeem-action {
+	border: 1px dashed #ccc;
+	padding: 15px;
+	background: #eee;
+	.redeem-button {
+		display: flex;
+		justify-content: center;
+	}
+}
