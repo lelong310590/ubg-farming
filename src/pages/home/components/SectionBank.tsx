@@ -235,11 +235,6 @@ const Form: FC = () => {
 				Loading...
 			</div>
 
-			const packageActive = packages.find(v => v.id === values.packageId) as StakingServiceV2;
-			console.log('packageActive: ', packageActive)
-			//const reward = values.amount ? (values.amount * packageActive.interest) / 100 : 0;
-			const reward = values.amount ? (packageActive.interest / 1000 + 1) * values.amount : 0;
-
 			if (userStake) return <>
 				<div className="UserStake">
 					<div className="title">UBG's saving information</div>
@@ -271,8 +266,6 @@ const Form: FC = () => {
 			return <>
 				<InputWraper inputProps={inputProps.amount} component={InputNumber} />
 				<InputWraper inputProps={inputProps.packageId} component={InputTagSelect} className="hideBorder" />
-
-				<p className="note">After <strong className="textPrimary">{packageActive.numberOfDays} days</strong> with <strong className="textPrimary">{values.amount ? (+values.amount).toLocaleString(getLocaleKey(true), { maximumFractionDigits: 2 }) : '--'} UBG</strong>, you will able to claim <strong className="textPrimary">{reward ? reward.toLocaleString(getLocaleKey(true), { maximumFractionDigits: 2 }) : '--'} UBG</strong></p>
 			</>
 		}()}
 

@@ -73,7 +73,7 @@ const Form: FC = () => {
 		},
 		onSubmit: async ({ values }) => {
 
-			let sendingAmount = checkTypeOfToken ? values.amount : values.amount * 1e18
+			let sendingAmount = checkTypeOfToken ? values.amount * 1e9 : values.amount * 1e18
 
 			let fromAddress = SmcService.configs.SMC_FARMING_V2_ADDRESS
 			let toContract = checkTypeOfToken ? SmcService.contractUBGToken : SmcService.contractLiquidity
@@ -265,7 +265,6 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
-		console.log('selectedPool: ', packages[selectedPoolIdx])
 		fetchCalculateFarm(id)
 	}
 

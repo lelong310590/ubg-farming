@@ -2,7 +2,7 @@ const DefaultEnvs = {
   // General information
   ENV: 'local', // Important
   APP_NAME: 'UBGFarm',
-  PUBLIC_URL: 'http://localhost:4000', // Important
+  PUBLIC_URL: 'https://farm-v2.ubgtoken.com', // Important
   LOCALE_DEFAULT: 'en_US',
 
   // Meta tag for SEO
