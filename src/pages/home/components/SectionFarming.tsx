@@ -90,6 +90,7 @@ const Form: FC = () => {
 						.then(async (res) => {
 							// await fetchUserBalance();
 							// await fetchUserStake();
+							fetchCalculateFarm(selectedPool.id)
 							setShowPoolDetail(false)
 							SmcService.transactionSuccessAlert(res, 'Farm successfully.');
 						})
@@ -235,6 +236,7 @@ const Form: FC = () => {
 			.then(async res => {
 				console.log('claim: ', res)
 				setIsClaiming(false);
+				fetchCalculateFarm(selectedPool.id)
 				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
 			})
 			.catch(async (err) => {
