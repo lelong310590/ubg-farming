@@ -31,8 +31,6 @@ export class StakingServiceV2 {
             })
         );
 
-        console.log('packages :', packages)
-
         return packages.filter((v) => {
             return v.interestSec > 0;
         });

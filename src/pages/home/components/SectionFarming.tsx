@@ -1,16 +1,13 @@
-import { useEffect, Fragment } from 'react'
-import { useState } from 'react'
-import { FC } from 'react'
-import { Element } from 'react-scroll'
-import { clearIntervalAsync, setIntervalAsync } from 'set-interval-async/fixed'
-import { getLocaleKey } from '../../../AppLanguages'
-import { useSelector } from '../../../AppStores'
-import { Button, Icon, InputNumber, Message } from '../../../components'
-import { InputTagSelect } from '../../../components/input/tag-select'
-import { DateTimeUtils, InputWraper, NumberUtils, useForm } from '../../../modules'
-import { AppService, ESMCStatus, SmcService } from '../../../services'
-import { StakePackage, UserStake } from '../../../services/staking'
-import { StakingServiceV2 } from '../../../services/staking/stakingv2.service'
+import {FC, Fragment, useEffect, useState} from 'react'
+import {Element} from 'react-scroll'
+import {clearIntervalAsync, setIntervalAsync} from 'set-interval-async/fixed'
+import {getLocaleKey} from '../../../AppLanguages'
+import {useSelector} from '../../../AppStores'
+import {Button, Icon, InputNumber, Message} from '../../../components'
+import {DateTimeUtils, InputWraper, NumberUtils, useForm} from '../../../modules'
+import {AppService, ESMCStatus, SmcService} from '../../../services'
+import {StakePackage} from '../../../services/staking'
+import {StakingServiceV2} from '../../../services/staking/stakingv2.service'
 import _ from 'lodash'
 
 export const SectionFarming: FC = () => {
@@ -47,7 +44,6 @@ const Form: FC = () => {
 		if (value && typeof balance === 'number') {
 			let compareBalance = checkTypeOfToken() ? balance : balance;
 			if (value > compareBalance) return 'Your balance not enough';
-
 			let compareValue = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
 
 			if (value < compareValue) {
@@ -148,9 +144,9 @@ const Form: FC = () => {
 			method: 'balanceOf',
 		}, SmcService.address)
 			.then(async res => {
-				console.log('balance: ', res)
-				console.log('ubg: ', SmcService.configs.SMC_UBG_TOKEN_ADDRESS)
-				console.log('selected: ', selectedPool)
+				// console.log('balance: ', res)
+				// console.log('ubg: ', SmcService.configs.SMC_UBG_TOKEN_ADDRESS)
+				// console.log('selected: ', selectedPool)
 				setBalance(+NumberUtils.cryptoConvert('decode', +res, decimals));
 			})
 			.catch(async (err) => {
@@ -158,30 +154,6 @@ const Form: FC = () => {
 				return false;
 			});
 	}
-
-	const fetchUserStake = async () => {
-		return SmcService.call({
-			contract: SmcService.contractStakingV2,
-			method: 'getMyStakingData'
-		})
-			.then(res => {
-				console.log('getMyStakingData: ', res)
-				// if (!(+res.initial)) return setUserStake(null);
-				// setUserStake({
-				// 	initial: +NumberUtils.cryptoConvert('decode', +res.initial, SmcService.contractUBGToken._decimals),
-				// 	reward: +NumberUtils.cryptoConvert('decode', +res.reward, SmcService.contractUBGToken._decimals),
-				// 	payAt: new Date(+res.payday * 1000),
-				// 	startAt: new Date(+res.startday * 1000)
-				// })
-			})
-			.catch(() => false);
-	}
-
-	// const fetchPackages = async () => {
-	// 	return StakingService.fetchPackages()
-	// 		.then(res => setPackages(res))
-	// 		.catch(() => false);
-	// }
 
 	const fetchPackagesV2 = async () => {
 		return StakingServiceV2.fetchPackages()
@@ -274,7 +246,6 @@ const Form: FC = () => {
 					SmcService.transactionSuccessAlert(res, 'Redeem successfully.');
 				})
 				.catch(async (err) => {
-					console.log('err: ', err)
 					setIsRedeeming(false);
 					SmcService.transactionErrorAlert(err, 'Redeem failed.');
 				});
@@ -354,6 +325,10 @@ const Form: FC = () => {
 			let label = checkTypeOfToken() ? ' UBG' : ' Token';
 			return balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: decimals }) + label
 		}
+	}
+
+	const showRward = (p) => {
+		return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
 	}
 
 	return <form onSubmit={handleSubmit}>
@@ -477,7 +452,7 @@ const Form: FC = () => {
 							<div className='row'>
 								{_.map(packages, (p, i) => {
 									return (
-										<Fragment>
+										<Fragment key={i}>
 											{i <= 3 && 
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
@@ -496,7 +471,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Reward: </div>
-															<div className="farming-pool-value">{p.interestSec} / day</div>
+															<div className="farming-pool-value">{showRward(p)} / day</div>
 														</div>
 														{/* <div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder: </div>
@@ -531,8 +506,8 @@ const Form: FC = () => {
 							<div className='row'>
 								{_.map(packages, (p, i) => {
 									return (
-										<Fragment>
-											{i > 4 && 
+										<Fragment key={i}>
+											{i > 3 &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
@@ -550,7 +525,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Reward: </div>
-															<div className="farming-pool-value">{p.interestSec} / day</div>
+															<div className="farming-pool-value">{showRward(p)} / day</div>
 														</div>
 														{/* <div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder: </div>
