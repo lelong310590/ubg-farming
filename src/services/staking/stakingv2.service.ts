@@ -12,7 +12,7 @@ export class StakingServiceV2 {
                     value
                 );
 
-                console.log("packageRes: ", packageRes);
+                console.log("packageRes: ", SmcService.contractFarmingV2);
 
                 const data: StakePackage = {
                     id: `${value}`,
