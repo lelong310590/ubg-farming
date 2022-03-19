@@ -190,7 +190,7 @@ const Form: FC = () => {
 	}
 
 	const initialize = async () => {
-		await fetchTime();
+		// await fetchTime();
 		// TODO: uncomment it when go to v1
 		// await fetchPackages();
 		await fetchPackagesV2();

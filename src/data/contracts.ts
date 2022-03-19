@@ -19,8 +19,8 @@ export interface ContractConfig {
   SMC_STAKING_ABI: any[];
   SMC_UBG_TOKEN_ADDRESS: string;
   SMC_UBG_TOKEN_ABI: any[];
-  SMC_LIQUIDITY_TOKEN_ADDRESS: string,
-  SMC_LIQUIDITY_TOKEN_ABI: any[],
+  SMC_LIQUIDITY_TOKEN_ADDRESS: string;
+  SMC_LIQUIDITY_TOKEN_ABI: any[];
   SMC_STAKING_V2_ADDRESS: string;
   SMC_STAKING_V2_ABI: any[];
   SMC_FARMING_V2_ADDRESS: string;
@@ -1167,7 +1167,7 @@ const contractABIs = {
   // V2
   SMC_STAKING_V2_ABI: abi_staking_v2,
   SMC_FARMING_V2_ABI: abi_farming_v2,
-  SMC_LIQUIDITY_TOKEN_ABI: abi_liquidity
+  SMC_LIQUIDITY_TOKEN_ABI: abi_liquidity,
 };
 
 export const contracts: {
@@ -1224,4 +1224,3 @@ export const contracts: {
     ...contractABIs,
   },
 };
-
