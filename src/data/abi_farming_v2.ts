@@ -3,6 +3,11 @@ export const abi_farming_v2 = [
     inputs: [
       {
         internalType: "address",
+        name: "_ownerAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "_ubgTokenAddress",
         type: "address",
       },
@@ -606,6 +611,19 @@ export const abi_farming_v2 = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "farmingUsers",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -769,6 +787,19 @@ export const abi_farming_v2 = [
     name: "modifyPack",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
