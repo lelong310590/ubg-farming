@@ -138,8 +138,9 @@
 		.farming-pool-title {
 			text-align: center;
 			font-weight: 700;
-			font-size: 25px;
-			margin-top: 25px
+			font-size: 19px;
+			margin-top: 25px;
+			line-height: 1.4;
 		}
 		.farming-pool-info-item {
 			padding: 15px 0;
@@ -240,5 +241,15 @@
 	.redeem-button {
 		display: flex;
 		justify-content: center;
+	}
+}
+
+.pool-group-type {
+	padding: 25px 0;
+	border-bottom: 1px dashed #ccc;
+	.pool-group-title {
+		font-size: 20px;
+		margin-bottom: 20px;
+		font-weight: 700;
 	}
 }

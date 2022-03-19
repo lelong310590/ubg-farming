@@ -230,12 +230,18 @@ const Form: FC = () => {
 
 	const getNameById = (id) => {
 		switch (id) {
-			case '1':
-				return 'Farm UBG'
-			case '2':
-				return 'Farm UBGUSDT'
 			case '3':
-				return 'Farm UBGBNB'
+				return 'Farm UBG - 12 months'
+			case '4':
+				return 'Farm UBG - 6 months'
+			case '5':
+				return 'Farm UBG - 24 months'
+			case '6':
+				return 'Farm UBG - 36 months'
+			case '7':
+				return 'Farm UBG-BUSD'
+			case '8':
+				return 'Farm UBG-BNB'
 			default:
 				return 'Test'
 		}
@@ -463,38 +469,115 @@ const Form: FC = () => {
 						</Fragment>
 					)}
 
-					<Fragment>
-						{_.map(packages, (p, i) => {
-							return (
-								<div className="col-12 col-md-4" key={i}>
-									<div className="farming-pool-wrapper">
-										<img src="./images/pool.png" alt="" className="img-fluid"/>
-										<div className="farming-pool-info">
-											<div className="farming-pool-title">
-												{getNameById(p.id)}
-											</div>
-											<div className="farming-pool-info-item">
-												<div className="farming-pool-label">Min Deposit: </div>
-												<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} UBG</div>
-											</div>
-											<div className="farming-pool-info-item">
-												<div className="farming-pool-label">End Time: </div>
-												<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : 'Endless'}</div>
-											</div>
-											<div className="farming-pool-info-item">
-												<div className="farming-pool-label">Reward: </div>
-												<div className="farming-pool-value">{p.interestSec} / day</div>
-											</div>
+					<div className="col-12">
+						<div className='pool-group-type'>
+							<div className="pool-group-title">
+								Farm UBG earn UBG
+							</div>
+							<div className='row'>
+								{_.map(packages, (p, i) => {
+									return (
+										<Fragment>
+											{i <= 3 && 
+											<div className="col-12 col-md-3" key={i}>
+												<div className="farming-pool-wrapper">
+													<img src="./images/pool.png" alt="" className="img-fluid"/>
+													<div className="farming-pool-info">
+														<div className="farming-pool-title">
+															{getNameById(p.id)}
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Min Deposit: </div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} UBG</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">End Time: </div>
+															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : 'Endless'}</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Reward: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														{/* <div className="farming-pool-info-item">
+															<div className="farming-pool-label">Pool Holder: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Total Reward: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">ARP: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div> */}
 
-											<div className="farming-pool-action">
-												<Button type="button" onClick={() => joinPool(p.id)} label="Join Pool" />
+														<div className="farming-pool-action">
+															<Button type="button" onClick={() => joinPool(p.id)} label="Join Pool" />
+														</div>
+													</div>
+												</div>
 											</div>
-										</div>
-									</div>
-								</div>
-							)
-						})}
-					</Fragment>
+											}
+										</Fragment>
+									)
+								})}
+							</div>
+						</div>
+
+						<div className='pool-group-type'>
+							<div className="pool-group-title">
+								Farm UBG earn LP
+							</div>
+							<div className='row'>
+								{_.map(packages, (p, i) => {
+									return (
+										<Fragment>
+											{i > 4 && 
+											<div className="col-12 col-md-3" key={i}>
+												<div className="farming-pool-wrapper">
+													<img src="./images/pool.png" alt="" className="img-fluid"/>
+													<div className="farming-pool-info">
+														<div className="farming-pool-title">
+															{getNameById(p.id)}
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Min Deposit: </div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} UBG</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">End Time: </div>
+															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : 'Endless'}</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Reward: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														{/* <div className="farming-pool-info-item">
+															<div className="farming-pool-label">Pool Holder: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">Total Reward: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div>
+														<div className="farming-pool-info-item">
+															<div className="farming-pool-label">ARP: </div>
+															<div className="farming-pool-value">{p.interestSec} / day</div>
+														</div> */}
+
+														<div className="farming-pool-action">
+															<Button type="button" onClick={() => joinPool(p.id)} label="Join Pool" />
+														</div>
+													</div>
+												</div>
+											</div>
+											}
+										</Fragment>
+									)
+								})}
+							</div>
+						</div>
+					</div>
 				</div>
 			</>
 		}()}
