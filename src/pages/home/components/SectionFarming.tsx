@@ -44,7 +44,7 @@ const Form: FC = () => {
 		if (value && typeof balance === 'number') {
 			let compareBalance = checkTypeOfToken() ? balance : balance;
 			if (value > compareBalance) return 'Your balance not enough';
-			let compareValue = selectedPool.minFarm === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
+			let compareValue = selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
 
 			if (value < compareValue) {
 				return 'Min deposit is: ' + compareValue + ' UBG'
