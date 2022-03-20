@@ -1,4 +1,5 @@
 import {SmcService} from "../smc";
+import _ from 'lodash';
 
 export class StakingServiceV2 {
     static async fetchPackages(): Promise<StakePackage[]> {
@@ -12,9 +13,19 @@ export class StakingServiceV2 {
                     value
                 );
 
-                console.log("packageRes: ", SmcService.contractFarmingV2);
+                const fetchTotalPoolAmount = await SmcService.call({
+                    contract: SmcService.contractFarmingV2,
+                    method: 'farmAmount',
+                }, value)
+
+                let totalPoolAmount = SmcService.configs.SMC_UBG_TOKEN_ADDRESS === packageRes.tokenAddress ? fetchTotalPoolAmount / 1e9 : fetchTotalPoolAmount / 1e18
+                let interestYear = SmcService.configs.SMC_UBG_TOKEN_ADDRESS === packageRes.tokenAddress ? packageRes.interestSec / 1e9 * 86400 * 365 : packageRes.interestSec / 1e18 * 86400 * 365
+
+                let abr = totalPoolAmount === 0 ? 0 : interestYear/totalPoolAmount
 
                 const data: StakePackage = {
+                    totalAmount: totalPoolAmount,
+                    abr: abr,
                     id: `${value}`,
                     interestSec: +packageRes.interestSec * 86400,
                     tokenAddress: packageRes.tokenAddress,
@@ -32,6 +43,10 @@ export class StakingServiceV2 {
             return v.interestSec > 0;
         });
     }
+
+    // static showAward = (p) => {
+    //     return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
+    // }
 
     /**
      *
@@ -63,6 +78,8 @@ export class StakingServiceV2 {
 // uint256 endTime; // time to end, 0 mean endless
 
 export interface StakePackage {
+    totalAmount: number,
+    abr: number,
     id: any;
     interestSec: number;
     tokenAddress: number;
