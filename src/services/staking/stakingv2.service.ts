@@ -26,7 +26,7 @@ export class StakingServiceV2 {
                     totalAmount: totalPoolAmount,
                     abr: abr,
                     id: `${value}`,
-                    interestSec: +packageRes.interestSec * 86400,
+                    interestSec: +packageRes.interestSec * 60 * 60 * 24,
                     tokenAddress: packageRes.tokenAddress,
                     minFarm: packageRes.minFarm,
                     farmingType: packageRes.farmingType,
