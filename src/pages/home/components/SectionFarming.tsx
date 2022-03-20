@@ -6,8 +6,7 @@ import {useSelector} from '../../../AppStores'
 import {Button, Icon, InputNumber, Message} from '../../../components'
 import {DateTimeUtils, InputWraper, NumberUtils, useForm} from '../../../modules'
 import {AppService, ESMCStatus, SmcService} from '../../../services'
-import {StakePackage} from '../../../services/staking'
-import {StakingServiceV2} from '../../../services/staking/stakingv2.service'
+import {StakingServiceV2, StakePackage} from '../../../services/staking/stakingv2.service'
 import _ from 'lodash'
 
 export const SectionFarming: FC = () => {
