@@ -16,10 +16,6 @@ export class StakingServiceV2 {
 
                 const data: StakePackage = {
                     id: `${value}`,
-                    name: packageRes.duration / 86400 + " days",
-                    roi: +packageRes.interest,
-                    interest: packageRes.interest,
-                    numberOfDays: +packageRes.duration / 86400,
                     interestSec: +packageRes.interestSec * 86400,
                     tokenAddress: packageRes.tokenAddress,
                     minFarm: packageRes.minFarm,
@@ -30,6 +26,7 @@ export class StakingServiceV2 {
                 return data;
             })
         );
+
 
         return packages.filter((v) => {
             return v.interestSec > 0;
@@ -67,10 +64,6 @@ export class StakingServiceV2 {
 
 export interface StakePackage {
     id: any;
-    name: any;
-    roi: number;
-    interest: number;
-    numberOfDays: number;
     interestSec: number;
     tokenAddress: number;
     minFarm: number;
