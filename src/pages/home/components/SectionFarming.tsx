@@ -31,6 +31,7 @@ const Form: FC = () => {
 	const [balance, setBalance] = useState(null as null | number);
 	const [packages, setPackages] = useState(null as null | any);
 	const [isClaiming, setIsClaiming] = useState(false);
+	const [isWithdraw, setIsWithdraw] = useState(false);
 	const [isRedeeming, setIsRedeeming] = useState(false);
 	const [redeemValue, setRedeemValue] = useState(0)
 	const [now, setNow] = useState(new Date());
@@ -38,7 +39,7 @@ const Form: FC = () => {
 	const [selectedPool, setSelectedPool] = useState(null as any)
 	const [showPoolDetail, setShowPoolDetail] = useState(false);
 	const [calculateFarm, setCalculateFarm] = useState(null as any)
-	const [totalAmountPool, setTotalAmountPool] = useState(null as any)
+	const [totalClaim, setTotalClaim] = useState(null as any)
 
 	const validateAmount = (value: number) => {
 		if (value && typeof balance === 'number') {
@@ -108,6 +109,7 @@ const Form: FC = () => {
 							await fetchUserBalance();
 							// await fetchUserStake();
 							fetchCalculateFarm(selectedPool.id)
+							fetchTotalClaim(selectedPool.id)
 							setShowPoolDetail(false)
 							SmcService.transactionSuccessAlert(res, 'Farm successfully.');
 						})
@@ -241,6 +243,7 @@ const Form: FC = () => {
 				.then(async res => {
 					setIsRedeeming(false);
 					fetchCalculateFarm(selectedPool.id)
+					fetchTotalClaim(selectedPool.id)
 					SmcService.transactionSuccessAlert(res, 'Redeem successfully.');
 				})
 				.catch(async (err) => {
@@ -256,18 +259,42 @@ const Form: FC = () => {
 	}
 
 	/**
-	 * func claim
+	 * func withdraw
 	 */
-	const claim = async () => {
-		setIsClaiming(true);
+	const withdraw = async () => {
+		setIsWithdraw(true);
 
 		await SmcService.send({
 			contract: SmcService.contractFarmingV2,
 			method: 'claim',
 		}, selectedPool.id)
 			.then(async res => {
+				setIsWithdraw(false);
+				fetchCalculateFarm(selectedPool.id)
+				fetchTotalClaim(selectedPool.id)
+				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
+			})
+			.catch(async (err) => {
+				console.log('err: ', err)
+				setIsWithdraw(false);
+				SmcService.transactionErrorAlert(err, 'Claim failed.');
+			});
+	}
+
+	/**
+	 *
+	 */
+	const claim = async () => {
+		setIsClaiming(true);
+
+		await SmcService.send({
+			contract: SmcService.contractFarmingV2,
+			method: 'claimInterest',
+		}, selectedPool.id)
+			.then(async res => {
 				setIsClaiming(false);
 				fetchCalculateFarm(selectedPool.id)
+				fetchTotalClaim(selectedPool.id)
 				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
 			})
 			.catch(async (err) => {
@@ -292,12 +319,27 @@ const Form: FC = () => {
 			});
 	}
 
+	const fetchTotalClaim = async (packageId) => {
+		await SmcService.call({
+			contract: SmcService.contractFarmingV2,
+			method: 'claimed',
+		},packageId, SmcService.address)
+			.then(res => {
+				setTotalClaim(res)
+			})
+			.catch((err) => {
+				console.log('err fetchUserBalance: ', err)
+				return false;
+			});
+	}
+
 	const joinPool = (id) => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
 		fetchUserBalance()
 		fetchCalculateFarm(id)
+		fetchTotalClaim(id)
 	}
 
 	const closePoolDetail = () => {
@@ -364,23 +406,27 @@ const Form: FC = () => {
 										</div>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'}</div>
+											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
 											<div className="farming-pool-value">{selectedPool.endTime > 0 ? showHumanTime(selectedPool.endTime) : 'Endless'}</div>
+										</div>
+										<div className="pool-item-info-row">
+											<div className="farming-pool-label">Without Unlock: </div>
+											<div className="farming-pool-value">{selectedPool.endTime > 0 ? Math.round(Math.abs(new Date().getTime() - selectedPool.endTime) / 3600000) + ' days' : 'Endless'}</div>
 										</div>
 										{calculateFarm !== null &&
 											<Fragment>
 												{calculateFarm[0] > 0 &&
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
-															<div className="farming-pool-label">Intersec / seconds: </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[0] / 1e9 : calculateFarm[0] / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'} / seconds</div>
+															<div className="farming-pool-label">Your reward:  </div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : (calculateFarm[0] - totalClaim) / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
 														</div>
 														<div className="pool-item-info-row pool-award">
-															<div className="farming-pool-label">Total Farmed Token: </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[1] / 1e18} {checkTypeOfToken() ? 'UBG' : 'Token'}</div>
+															<div className="farming-pool-label">Your deposit: </div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[1] / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
 														</div>
 													</Fragment>
 												}
@@ -403,8 +449,11 @@ const Form: FC = () => {
 															return (
 																<Fragment>
 																	<Button isLoading={isSubmitting} type="submit" label="Continue Farm" />
+
+																	<Button isLoading={isClaiming} className="claim-button" onClick={() => claim()} type="button"  label="Claim" />
+
 																	{checkPoolTime &&
-																		<Button className="claim-button" isLoading={isClaiming} onClick={() => claim()} type="button" label="Claim" />
+																		<Button className="claim-button" isLoading={isWithdraw} onClick={() => withdraw()} type="button" label="Withdraw" />
 																	}
 																</Fragment>
 															)
