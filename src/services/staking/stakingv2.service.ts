@@ -1,5 +1,4 @@
 import {SmcService} from "../smc";
-import _ from 'lodash';
 
 export class StakingServiceV2 {
     static async fetchPackages(): Promise<StakePackage[]> {
@@ -44,9 +43,6 @@ export class StakingServiceV2 {
         });
     }
 
-    // static showAward = (p) => {
-    //     return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
-    // }
 
     /**
      *

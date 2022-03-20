@@ -6,7 +6,7 @@ import {useSelector} from '../../../AppStores'
 import {Button, Icon, InputNumber, Message} from '../../../components'
 import {DateTimeUtils, InputWraper, NumberUtils, useForm} from '../../../modules'
 import {AppService, ESMCStatus, SmcService} from '../../../services'
-import {StakingServiceV2, StakePackage} from '../../../services/staking/stakingv2.service'
+import {StakingServiceV2} from '../../../services/staking/stakingv2.service'
 import _ from 'lodash'
 
 export const SectionFarming: FC = () => {
@@ -29,7 +29,7 @@ const Form: FC = () => {
 	const smc = useSelector(s => s.smc);
 	const [isFetched, setIsFetched] = useState(false);
 	const [balance, setBalance] = useState(null as null | number);
-	const [packages, setPackages] = useState(null as null | StakePackage[]);
+	const [packages, setPackages] = useState(null as null | any);
 	const [isClaiming, setIsClaiming] = useState(false);
 	const [isRedeeming, setIsRedeeming] = useState(false);
 	const [redeemValue, setRedeemValue] = useState(0)
@@ -156,7 +156,7 @@ const Form: FC = () => {
 
 	const fetchPackagesV2 = async () => {
 		let res = await StakingServiceV2.fetchPackages();
-		return await setPackages(res);
+		return setPackages(res);
 	}
 
 	const initialize = async () => {
