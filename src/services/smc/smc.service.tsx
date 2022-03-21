@@ -104,8 +104,7 @@ export class SmcService {
                 {from: this.address}
             ) as any;
             this.contractLiquidity._name = "Luquidity";
-
-
+            this.contractLiquidity._decimals = 18;
 
             // Check network
             this.chainId = `${ethereum.networkVersion}`;

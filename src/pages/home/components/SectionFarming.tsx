@@ -135,10 +135,15 @@ const Form: FC = () => {
 	}
 
 	// get current user balance
-	const fetchUserBalance = async () => {
+	const fetchUserBalance = async (isLP = false) => {
 
-		let contract = checkTypeOfToken() ? SmcService.contractUBGToken : SmcService.contractLiquidity
-		let decimals = checkTypeOfToken() ? SmcService.contractUBGToken._decimals : 18;
+		let contract = SmcService.contractUBGToken;
+		let decimals = SmcService.contractUBGToken._decimals;
+
+		if (isLP) {
+			contract = SmcService.contractLiquidity;
+			decimals = SmcService.contractLiquidity._decimals;
+		}
 
 		await SmcService.call({
 			contract: contract,
@@ -212,9 +217,9 @@ const Form: FC = () => {
 			// 	return 'Farm UBG - 24 months'
 			// case '5':
 			// 	return 'Farm UBG - 36 months'
-			case '5':
+			case '2':
 				return 'Farm UBG-BUSD'
-			case '4':
+			case '3':
 				return 'Farm UBG-BNB'
 			default:
 				return 'No Label'
@@ -339,7 +344,7 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
-		fetchUserBalance()
+		fetchUserBalance(true)
 		fetchCalculateFarm(id)
 		fetchTotalClaim(id)
 	}
@@ -569,7 +574,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{(i > 2 && i <= 4) &&
+											{(i > 1 && i <= 3) &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
