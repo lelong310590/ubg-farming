@@ -367,7 +367,8 @@ const Form: FC = () => {
 	}
 
 	const showAward = (p) => {
-		return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
+		// return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
+		return p.interestSec / 1e9
 	}
 
 	return <form onSubmit={handleSubmit}>
@@ -440,10 +441,10 @@ const Form: FC = () => {
 													if (smc.status === ESMCStatus.NONE) return;
 													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => SmcService.handleConnectWallet()} />
 													let checkPoolTime = new Date().getTime() > selectedPool.endTime
-													console.log('new Date: ', new Date().getTime())
-													console.log('selectedPool.endTime: ', selectedPool.endTime)
-													console.log('calculateFarme: ', calculateFarm)
-													console.log('selectedPool: ', selectedPool)
+													// console.log('new Date: ', new Date().getTime())
+													// console.log('selectedPool.endTime: ', selectedPool.endTime)
+													// console.log('calculateFarme: ', calculateFarm)
+													// console.log('selectedPool: ', selectedPool)
 													if (calculateFarm !== null) {
 														if (calculateFarm[0] > 0) {
 															return (
@@ -517,15 +518,20 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Reward: </div>
-															<div className="farming-pool-value">{showAward(p)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'} / day</div>
+															<div className="farming-pool-value">{p.interestSec / 1e9} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'} / day</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder : </div>
 															<div className="farming-pool-value">{p.totalAmount} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
+
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">ARP: </div>
-															<div className="farming-pool-value">{p.abr} %</div>
+															{p.endTime !== 0 ? (
+																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
+															) : (
+																<div className="farming-pool-value">N/A</div>
+															)}
 														</div>
 														{/* <div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder: </div>
@@ -587,7 +593,11 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">ARP: </div>
-															<div className="farming-pool-value">{p.abr} %</div>
+															{p.endTime !== 0 ? (
+																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
+															) : (
+																<div className="farming-pool-value">N/A</div>
+															)}
 														</div>
 														{/* <div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder: </div>

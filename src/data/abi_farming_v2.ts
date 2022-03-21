@@ -611,6 +611,25 @@ export const abi_farming_v2 = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "farmPaidAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "farmingUsers",
     "outputs": [
@@ -804,32 +823,6 @@ export const abi_farming_v2 = [
   },
   {
     "inputs": [],
-    "name": "owedCommissionAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owedInterestAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "owner",
     "outputs": [
       {
@@ -854,6 +847,80 @@ export const abi_farming_v2 = [
       {
         "internalType": "bool",
         "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "packs",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "minFarm",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "interestSec",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "farmingType",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commission1",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commission2",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commission3",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commission4",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "commission5",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "enabled",
         "type": "bool"
       }
     ],
@@ -938,19 +1005,6 @@ export const abi_farming_v2 = [
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalPaidAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",

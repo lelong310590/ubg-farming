@@ -3,7 +3,7 @@ import {SmcService} from "../smc";
 export class StakingServiceV2 {
     static async fetchPackages(): Promise<StakePackage[]> {
         const packages = await Promise.all(
-            ["3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(async (value, index) => {
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(async (value, index) => {
                 const packageRes = await SmcService.call(
                     {
                         contract: SmcService.contractFarmingV2,
