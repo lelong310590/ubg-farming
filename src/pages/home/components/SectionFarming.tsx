@@ -135,13 +135,13 @@ const Form: FC = () => {
 	}
 
 	// get current user balance
-	const fetchUserBalance = async (isLP = false) => {
+	const fetchUserBalance = async (isLP = null) => {
 
-		let contract = SmcService.contractUBGToken;
+		let contract : any = SmcService.contractUBGToken;
 		let decimals = SmcService.contractUBGToken._decimals;
 
-		if (isLP) {
-			contract = SmcService.contractLiquidity;
+		if (isLP !== null) {
+			contract = await SmcService.liquidityContract(isLP.tokenAddress);
 			decimals = SmcService.contractLiquidity._decimals;
 		}
 
@@ -153,7 +153,7 @@ const Form: FC = () => {
 				// console.log('balance: ', res)
 				// console.log('ubg: ', SmcService.configs.SMC_UBG_TOKEN_ADDRESS)
 				// console.log('selected: ', selectedPool)
-				setBalance(+NumberUtils.cryptoConvert('decode', +res, decimals));
+				await setBalance(+NumberUtils.cryptoConvert('decode', +res, decimals));
 			})
 			.catch(async (err) => {
 				console.log('err fetchUserBalance: ', err)
@@ -190,11 +190,19 @@ const Form: FC = () => {
 		}
 
 		if (smc.status === ESMCStatus.READY) {
-			fetchUserBalance();
+			if (selectedPool === null) {
+				fetchUserBalance();
+			} else {
+				fetchUserBalance(selectedPool);
+			}
 			// fetchUserStake();
 			//
 			interval2 = setIntervalAsync(async () => {
-				await fetchUserBalance();
+				if (selectedPool === null) {
+					await fetchUserBalance();
+				} else {
+					await fetchUserBalance(selectedPool);
+				}
 				// await fetchUserStake();
 			}, 5000);
 		}
@@ -344,7 +352,7 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
-		fetchUserBalance(true)
+		fetchUserBalance(packages[selectedPoolIdx])
 		fetchCalculateFarm(id)
 		fetchTotalClaim(id)
 	}
@@ -574,7 +582,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{(i > 1 && i <= 3) &&
+											{(i >= 1 && i < 3) &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>

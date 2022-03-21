@@ -281,7 +281,7 @@ export class SmcService {
 
     static async call(
         options: {
-            contract: Contract;
+            contract: Contract | any;
             method: string;
             onSubmitted?: (transactionHash: string) => void;
         },
