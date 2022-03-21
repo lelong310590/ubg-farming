@@ -203,16 +203,18 @@ const Form: FC = () => {
 	const getNameById = (id) => {
 		switch (id) {
 			case '1':
-				return 'Farm UBG - 12 months'
+				return 'Farm UBG - 24 hours'
 			case '2':
 				return 'Farm UBG - 6 months'
 			case '3':
-				return 'Farm UBG - 24 months'
+				return 'Farm UBG - 12 months'
 			case '4':
-				return 'Farm UBG - 36 months'
+				return 'Farm UBG - 24 months'
 			case '5':
-				return 'Farm UBG-BUSD'
+				return 'Farm UBG - 36 months'
 			case '6':
+				return 'Farm UBG-BUSD'
+			case '7':
 				return 'Farm UBG-BNB'
 			default:
 				return 'Test'
@@ -500,7 +502,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{i <= 3 && 
+											{i <= 4 &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
@@ -561,13 +563,13 @@ const Form: FC = () => {
 
 						<div className='pool-group-type'>
 							<div className="pool-group-title">
-								Farm UBG earn LP
+								Farm LP earn UBG
 							</div>
 							<div className='row'>
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{i > 3 &&
+											{i > 4 &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
