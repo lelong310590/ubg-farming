@@ -361,7 +361,7 @@ const Form: FC = () => {
 			return '--'
 		} else {
 			let decimals = checkTypeOfToken() ? 9 : 18;
-			let label = checkTypeOfToken() ? ' UBG' : ' Token';
+			let label = checkTypeOfToken() ? ' UBG' : ' LP';
 			return balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: decimals }) + label
 		}
 	}
@@ -422,7 +422,7 @@ const Form: FC = () => {
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your reward:  </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : (calculateFarm[0] - totalClaim) / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : (calculateFarm[0] - totalClaim) / 1e18} UBG</div>
 														</div>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your deposit: </div>
@@ -469,7 +469,7 @@ const Form: FC = () => {
 											</div>
 										</div>
 
-										{SmcService.address === '0x5d71946037e314FdCCdCb6656d0DDc417Aa2044E' &&
+										{SmcService.address === '0xAdF5461160CEc0aA39c5a16D72Ff407EB7e971b2' &&
 											<div className="pool-items-action redeem-action">
 												<div className="InputWraper"><label htmlFor="amount">Enter your amount to redeem </label><br/>
 													<div className="inputSection">
