@@ -929,6 +929,19 @@ export const abi_farming_v2 = [
   },
   {
     "inputs": [],
+    "name": "packsLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "paused",
     "outputs": [
       {

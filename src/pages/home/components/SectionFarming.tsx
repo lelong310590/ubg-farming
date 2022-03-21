@@ -204,20 +204,20 @@ const Form: FC = () => {
 		switch (id) {
 			case '1':
 				return 'Farm UBG - 24 hours'
+			// case '2':
+			// 	return 'Farm UBG - 6 months'
+			// case '3':
+			// 	return 'Farm UBG - 12 months'
+			// case '4':
+			// 	return 'Farm UBG - 24 months'
+			// case '5':
+			// 	return 'Farm UBG - 36 months'
 			case '2':
-				return 'Farm UBG - 6 months'
-			case '3':
-				return 'Farm UBG - 12 months'
-			case '4':
-				return 'Farm UBG - 24 months'
-			case '5':
-				return 'Farm UBG - 36 months'
-			case '7':
 				return 'Farm UBG-BUSD'
-			case '8':
+			case '3':
 				return 'Farm UBG-BNB'
 			default:
-				return 'Test'
+				return 'No Label'
 		}
 	}
 
@@ -502,7 +502,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{i <= 4 &&
+											{i < 1 &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
@@ -569,7 +569,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{i > 5 &&
+											{(i > 0 && i <= 2) &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
@@ -587,7 +587,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Reward: </div>
-															<div className="farming-pool-value">{showAward(p)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'} / day</div>
+															<div className="farming-pool-value">{showAward(p)} UBG / day</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Pool Holder : </div>
