@@ -414,7 +414,7 @@ const Form: FC = () => {
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">Without Unlock: </div>
-											<div className="farming-pool-value">{selectedPool.endTime > 0 ? Math.round(Math.abs(new Date().getTime() - selectedPool.endTime) / 1000 / 60 / 60/ 24) + ' days' : 'Endless'}</div>
+											<div className="farming-pool-value">{selectedPool.endTime > 0 ? Math.round(Math.abs(new Date().getTime() - selectedPool.endTime) / 1000 / 60 / 60/ 24) + ' day(s)' : 'Endless'}</div>
 										</div>
 										{calculateFarm !== null &&
 											<Fragment>
