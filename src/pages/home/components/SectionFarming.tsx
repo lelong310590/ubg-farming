@@ -381,6 +381,24 @@ const Form: FC = () => {
 		}
 	}
 
+	const toFixed = (x) => {
+		if (Math.abs(x) < 1.0) {
+			var e = parseInt(x.toString().split('e-')[1]);
+			if (e) {
+				x *= Math.pow(10,e-1);
+				x = '0.' + (new Array(e)).join('0') + x.toString().substring(2);
+			}
+		} else {
+			var e = parseInt(x.toString().split('+')[1]);
+			if (e > 20) {
+				e -= 20;
+				x /= Math.pow(10,e);
+				x += (new Array(e+1)).join('0');
+			}
+		}
+		return x;
+	}
+
 	const showAward = (p) => {
 		// return SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.interestSec / 1e9 : p.interestSec / 1e18
 		return p.interestSec / 1e9
@@ -438,7 +456,7 @@ const Form: FC = () => {
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your reward:  </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : (calculateFarm[0] - totalClaim) / 1e18} UBG</div>
+															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : toFixed((calculateFarm[0] - totalClaim) / 1e18)} UBG</div>
 														</div>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your deposit: </div>
@@ -592,7 +610,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 18)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : toFixed(NumberUtils.cryptoConvert('decode', p.minFarm, 18))} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
