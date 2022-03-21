@@ -409,7 +409,7 @@ const Form: FC = () => {
 										</div>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{checkTypeOfToken() ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
+											<div className="pool-item-info-value">{checkTypeOfToken() ? NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 9) : NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 18)} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
@@ -512,7 +512,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 9)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
@@ -579,7 +579,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.minFarm / 1e9 : p.minFarm / 1e18} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 9)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
