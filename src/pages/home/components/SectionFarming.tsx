@@ -202,17 +202,17 @@ const Form: FC = () => {
 
 	const getNameById = (id) => {
 		switch (id) {
-			case '3':
+			case '1':
 				return 'Farm UBG - 12 months'
-			case '4':
+			case '2':
 				return 'Farm UBG - 6 months'
-			case '5':
+			case '3':
 				return 'Farm UBG - 24 months'
-			case '6':
+			case '4':
 				return 'Farm UBG - 36 months'
-			case '7':
+			case '5':
 				return 'Farm UBG-BUSD'
-			case '8':
+			case '6':
 				return 'Farm UBG-BNB'
 			default:
 				return 'Test'
