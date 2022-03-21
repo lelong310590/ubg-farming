@@ -212,9 +212,9 @@ const Form: FC = () => {
 				return 'Farm UBG - 24 months'
 			case '5':
 				return 'Farm UBG - 36 months'
-			case '6':
-				return 'Farm UBG-BUSD'
 			case '7':
+				return 'Farm UBG-BUSD'
+			case '8':
 				return 'Farm UBG-BNB'
 			default:
 				return 'Test'
@@ -569,7 +569,7 @@ const Form: FC = () => {
 								{_.map(packages, (p, i) => {
 									return (
 										<Fragment key={i}>
-											{i > 4 &&
+											{i > 5 &&
 											<div className="col-12 col-md-3" key={i}>
 												<div className="farming-pool-wrapper">
 													<img src="./images/pool.png" alt="" className="img-fluid"/>
