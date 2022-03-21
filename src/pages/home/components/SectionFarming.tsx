@@ -579,7 +579,7 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 9)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 18)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
