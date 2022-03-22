@@ -48,7 +48,7 @@ const Form: FC = () => {
 			let compareValue = selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? selectedPool.minFarm / 1e9 : selectedPool.minFarm / 1e18;
 
 			if (value < compareValue) {
-				return 'Min deposit is: ' + compareValue + ' UBG'
+				return 'Min deposit is: ' + compareValue + selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? ' UBG' : ' LP'
 			}
 		}
 	}
@@ -106,7 +106,7 @@ const Form: FC = () => {
 						method: 'farm'
 					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
-							await fetchUserBalance();
+							await fetchUserBalance(selectedPool);
 							// await fetchUserStake();
 							fetchCalculateFarm(selectedPool.id)
 							fetchTotalClaim(selectedPool.id)
@@ -135,14 +135,16 @@ const Form: FC = () => {
 	}
 
 	// get current user balance
-	const fetchUserBalance = async (isLP = null) => {
+	const fetchUserBalance = async (sltPool = null) => {
 
 		let contract : any = SmcService.contractUBGToken;
 		let decimals = SmcService.contractUBGToken._decimals;
 
-		if (isLP !== null) {
-			contract = await SmcService.liquidityContract(isLP.tokenAddress);
-			decimals = SmcService.contractLiquidity._decimals;
+		if (sltPool !== null) {
+			if (sltPool.tokenAddress !== SmcService.contractUBGToken._address) {
+				contract = await SmcService.liquidityContract(sltPool.tokenAddress);
+				decimals = SmcService.contractLiquidity._decimals;
+			}
 		}
 
 		await SmcService.call({
@@ -190,26 +192,16 @@ const Form: FC = () => {
 		}
 
 		if (smc.status === ESMCStatus.READY) {
-			if (selectedPool === null) {
-				fetchUserBalance();
-			} else {
-				fetchUserBalance(selectedPool);
-			}
-			// fetchUserStake();
-			//
-			interval2 = setIntervalAsync(async () => {
-				if (selectedPool === null) {
-					await fetchUserBalance();
-				} else {
-					await fetchUserBalance(selectedPool);
-				}
-				// await fetchUserStake();
-			}, 5000);
+			fetchUserBalance();
+
+			// interval2 = setIntervalAsync(async () => {
+			// 	await fetchUserBalance();
+			// }, 5000);
 		}
 
 		return () => {
 			if (interval) clearIntervalAsync(interval);
-			if (interval2) clearIntervalAsync(interval2);
+			// if (interval2) clearIntervalAsync(interval2);
 		}
 	}, [smc.status])
 
@@ -329,7 +321,7 @@ const Form: FC = () => {
 				setCalculateFarm(res)
 			})
 			.catch((err) => {
-				console.log('err fetchUserBalance: ', err)
+
 				return false;
 			});
 	}
@@ -343,7 +335,7 @@ const Form: FC = () => {
 				setTotalClaim(res)
 			})
 			.catch((err) => {
-				console.log('err fetchUserBalance: ', err)
+
 				return false;
 			});
 	}
@@ -352,9 +344,9 @@ const Form: FC = () => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
-		fetchUserBalance(packages[selectedPoolIdx])
 		fetchCalculateFarm(id)
 		fetchTotalClaim(id)
+		fetchUserBalance(packages[selectedPoolIdx])
 	}
 
 	const closePoolDetail = () => {
@@ -380,6 +372,7 @@ const Form: FC = () => {
 			return balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: decimals }) + label
 		}
 	}
+
 
 	const toFixed = (x) => {
 		if (Math.abs(x) < 1.0) {
@@ -407,11 +400,11 @@ const Form: FC = () => {
 	return <form onSubmit={handleSubmit}>
 		<div className="head">
 			<div className="title">Investment</div>
-			<div className="UserBalance">
-				<span className="icon"><Icon.Wallet /></span>
-				<span className="label">Your balance:</span>
-				<span className="value">{balance === null ? '--' : `${balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: 9 })} UBG`}</span>
-			</div>
+			{/*<div className="UserBalance">*/}
+			{/*	<span className="icon"><Icon.Wallet /></span>*/}
+			{/*	<span className="label">Your balance:</span>*/}
+			{/*	<span className="value">{balance === null ? '--' : `${balance.toLocaleString(getLocaleKey(true), { maximumFractionDigits: 9 })} UBG`}</span>*/}
+			{/*</div>*/}
 		</div>
 
 		{function () {
@@ -440,7 +433,11 @@ const Form: FC = () => {
 										</div>
 										<div className="pool-item-info-row">
 											<div className="pool-item-info-label">Min Deposit: </div>
-											<div className="pool-item-info-value">{checkTypeOfToken() ? NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 9) : NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 18)} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
+											{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
+												<div className="pool-item-info-value">{NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 9)} UBG</div>
+											) : (
+												<div className="pool-item-info-value">{NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 18)} LP</div>
+											)}
 										</div>
 										<div className="pool-item-info-row">
 											<div className="farming-pool-label">End Time: </div>
@@ -456,11 +453,19 @@ const Form: FC = () => {
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your reward:  </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? (calculateFarm[0] - totalClaim) / 1e9 : toFixed((calculateFarm[0] - totalClaim) / 1e18)} UBG</div>
+															{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
+																<div className="farming-pool-value">{(calculateFarm[0] - totalClaim) / 1e9} UBG</div>
+															) : (
+																<div className="farming-pool-value">{(calculateFarm[0] - totalClaim) / 1e18} UBG</div>
+															)}
 														</div>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your deposit: </div>
-															<div className="farming-pool-value">{checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[1] / 1e18} {checkTypeOfToken() ? 'UBG' : 'LP'}</div>
+															{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
+																<div className="farming-pool-value">{(calculateFarm[1] - totalClaim) / 1e9} UBG</div>
+															) : (
+																<div className="farming-pool-value">{(calculateFarm[1] - totalClaim) / 1e18} LP</div>
+															)}
 														</div>
 													</Fragment>
 												}
@@ -543,7 +548,13 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : NumberUtils.cryptoConvert('decode', p.minFarm, 9)} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+
+															{p.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
+																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 9)} UBG</div>
+															) : (
+																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 18)} LP</div>
+															)}
+
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
@@ -610,7 +621,11 @@ const Form: FC = () => {
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Min Deposit: </div>
-															<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? NumberUtils.cryptoConvert('decode', p.minFarm, 9) : toFixed(NumberUtils.cryptoConvert('decode', p.minFarm, 18))} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
+															{p.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
+																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 9)} UBG</div>
+															) : (
+																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 18)} LP</div>
+															)}
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">End Time: </div>
