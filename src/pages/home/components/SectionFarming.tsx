@@ -7,6 +7,7 @@ import {Button, Icon, InputNumber, Message} from '../../../components'
 import {DateTimeUtils, InputWraper, NumberUtils, useForm} from '../../../modules'
 import {AppService, ESMCStatus, SmcService} from '../../../services'
 import {StakingServiceV2} from '../../../services/staking/stakingv2.service'
+import { OnModalWallet } from '../../../modals'
 import _ from 'lodash'
 
 export const SectionFarming: FC = () => {
@@ -55,11 +56,6 @@ const Form: FC = () => {
 
 	const handleChangeRedeem = (e) => {
 		setRedeemValue(e.target.value)
-	}
-
-	const validateRedeem = () => {
-		let compareValue = checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[2] / 1e18;
-		return redeemValue <= compareValue;
 	}
 
 	const { handleSubmit, isSubmitting, inputProps, values } = useForm({
@@ -237,10 +233,17 @@ const Form: FC = () => {
 			":"+date.getSeconds();
 	}
 
+	const validateRedeem = () => {
+		let compareValue = checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[2] / 1e18;
+		return redeemValue <= compareValue;
+	}
+
 	const redeem = async () => {
 		setIsRedeeming(true);
 
 		let amount = checkTypeOfToken() ? redeemValue * 1e9 : redeemValue * 1e18;
+
+
 
 		if (validateRedeem()) {
 			await SmcService.send({
@@ -259,7 +262,7 @@ const Form: FC = () => {
 				});
 		} else {
 			let compareValue = checkTypeOfToken() ? calculateFarm[1] / 1e9 : calculateFarm[2] / 1e18;
-			let label = checkTypeOfToken() ? ' UBG' : ' Token';
+			let label = checkTypeOfToken() ? ' UBG' : ' LP';
 			alert('Max amount to redeem is: ' + compareValue + label)
 			setIsRedeeming(false);
 		}
@@ -397,6 +400,11 @@ const Form: FC = () => {
 		return p.interestSec / 1e9
 	}
 
+	const connectWallet = () => {
+		setShowPoolDetail(false)
+		OnModalWallet()
+	}
+
 	return <form onSubmit={handleSubmit}>
 		<div className="head">
 			<div className="title">Investment</div>
@@ -473,7 +481,7 @@ const Form: FC = () => {
 												{function () {
 													if (smc.error) return
 													if (smc.status === ESMCStatus.NONE) return;
-													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => SmcService.handleConnectWallet()} />
+													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => connectWallet()} />
 													let checkPoolTime = new Date().getTime() > selectedPool.endTime
 													// console.log('new Date: ', new Date().getTime())
 													// console.log('selectedPool.endTime: ', selectedPool.endTime)
@@ -566,7 +574,7 @@ const Form: FC = () => {
 														</div>
 
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">ARP: </div>
+															<div className="farming-pool-label">APR: </div>
 															{p.endTime !== 0 ? (
 																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
 															) : (
@@ -636,7 +644,7 @@ const Form: FC = () => {
 															<div className="farming-pool-value">{p.totalAmount} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">ARP: </div>
+															<div className="farming-pool-label">APR: </div>
 															{p.endTime !== 0 ? (
 																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
 															) : (
