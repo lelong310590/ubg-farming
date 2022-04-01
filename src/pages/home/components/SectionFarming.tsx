@@ -101,7 +101,7 @@ const Form: FC = () => {
 					return SmcService.send({
 						contract: SmcService.contractFarmingV2,
 						method: 'farm',
-						params: fee
+						params: {value: fee}
 					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
 							await fetchUserBalance(selectedPool);
@@ -290,7 +290,7 @@ const Form: FC = () => {
 		await SmcService.send({
 			contract: SmcService.contractFarmingV2,
 			method: 'claim',
-			params: fee
+			params: {value: fee}
 		}, selectedPool.id)
 			.then(async res => {
 				setIsWithdraw(false);
