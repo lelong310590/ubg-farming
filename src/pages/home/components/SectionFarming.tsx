@@ -41,6 +41,7 @@ const Form: FC = () => {
 	const [showPoolDetail, setShowPoolDetail] = useState(false);
 	const [calculateFarm, setCalculateFarm] = useState(null as any)
 	const [totalClaim, setTotalClaim] = useState(null as any)
+	const [fee, setFee] = useState(null as null | number)
 
 	const validateAmount = (value: number) => {
 		if (value && typeof balance === 'number') {
@@ -99,7 +100,8 @@ const Form: FC = () => {
 				.then(async () => {
 					return SmcService.send({
 						contract: SmcService.contractFarmingV2,
-						method: 'farm'
+						method: 'farm',
+						params: fee
 					}, selectedPool.id, NumberUtils.cryptoConvert('encode', values.amount, decimals), ref ?? '0x0000000000000000000000000000000000000000')
 						.then(async (res) => {
 							await fetchUserBalance(selectedPool);
@@ -164,11 +166,22 @@ const Form: FC = () => {
 		return setPackages(res);
 	}
 
+	const fetchFee = async () => {
+		return StakingServiceV2.fetchFee()
+			.then((res) => {
+				setFee(res)
+			})
+			.catch(() => {
+				setFee(5e15)
+			})
+	}
+
 	const initialize = async () => {
 		// await fetchTime();
 		// TODO: uncomment it when go to v1
 		// await fetchPackages();
 		await fetchPackagesV2();
+		await fetchFee();
 		setIsFetched(true);
 	}
 
@@ -277,6 +290,7 @@ const Form: FC = () => {
 		await SmcService.send({
 			contract: SmcService.contractFarmingV2,
 			method: 'claim',
+			params: fee
 		}, selectedPool.id)
 			.then(async res => {
 				setIsWithdraw(false);
