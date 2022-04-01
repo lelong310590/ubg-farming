@@ -475,14 +475,14 @@ const Form: FC = () => {
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your reward:  </div>
-															<div className="farming-pool-value">{(calculateFarm[0] - totalClaim) / 1e9} UBG</div>
+															<div className="farming-pool-value">{(calculateFarm[0]) / 1e9} UBG</div>
 														</div>
 														<div className="pool-item-info-row pool-award">
 															<div className="farming-pool-label">Your deposit: </div>
 															{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
-																<div className="farming-pool-value">{(calculateFarm[1] - totalClaim) / 1e9} UBG</div>
+																<div className="farming-pool-value">{(calculateFarm[1]) / 1e9} UBG</div>
 															) : (
-																<div className="farming-pool-value">{(calculateFarm[1] - totalClaim) / 1e18} LP</div>
+																<div className="farming-pool-value">{(calculateFarm[1]) / 1e18} LP</div>
 															)}
 														</div>
 													</Fragment>
