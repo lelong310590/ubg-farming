@@ -9,6 +9,15 @@ export class StakingServiceV2 {
         })
     }
 
+    static async fetchAbleToRedeem(address: string): Promise<any> {
+        return await SmcService.call(
+            {
+                contract: SmcService.contractFarmingV2,
+                method: 'ableToRedeem',
+            }, address
+        );
+    }
+
     static async fetchPackages(): Promise<StakePackage[]> {
         const packages = await Promise.all(
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"].map(async (value, index) => {

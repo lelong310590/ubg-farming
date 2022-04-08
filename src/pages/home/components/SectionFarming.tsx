@@ -42,6 +42,7 @@ const Form: FC = () => {
 	const [calculateFarm, setCalculateFarm] = useState(null as any)
 	const [totalClaim, setTotalClaim] = useState(null as any)
 	const [fee, setFee] = useState(null as null | number)
+	const [ableToRedeem, setAbleToRedeem] = useState(false)
 
 	const validateAmount = (value: number) => {
 		if (value && typeof balance === 'number') {
@@ -357,10 +358,16 @@ const Form: FC = () => {
 			});
 	}
 
+	const fetchAbleToRedeem = async () => {
+		let res = await StakingServiceV2.fetchAbleToRedeem(SmcService.address);
+		return setAbleToRedeem(res);
+	}
+
 	const joinPool = (id) => {
 		let selectedPoolIdx = _.findIndex(packages, function(o) { return o.id == id });
 		setSelectedPool(packages[selectedPoolIdx])
 		setShowPoolDetail(true)
+		fetchAbleToRedeem()
 		fetchCalculateFarm(id)
 		fetchTotalClaim(id)
 		fetchUserBalance(packages[selectedPoolIdx])
@@ -526,7 +533,7 @@ const Form: FC = () => {
 											</div>
 										</div>
 
-										{SmcService.address === '0xAdF5461160CEc0aA39c5a16D72Ff407EB7e971b2' &&
+										{ableToRedeem &&
 											<div className="pool-items-action redeem-action">
 												<div className="InputWraper"><label htmlFor="amount">Enter your amount to redeem </label><br/>
 													<div className="inputSection">
