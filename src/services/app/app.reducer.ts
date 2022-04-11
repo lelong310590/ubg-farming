@@ -1,4 +1,5 @@
 import {IDevice} from "../../AppTypes";
+import language from './../../../lang/lang.json'
 
 interface State {
     device: IDevice,
@@ -7,7 +8,7 @@ interface State {
 
 const defaultState = {
     device: {},
-    lang: {}
+    lang: language.en
 } as State
 
 export const SET_APP_CLIENT_DEVICE_INFORMATION = 'SET_APP_CLIENT_DEVICE_INFORMATION';
