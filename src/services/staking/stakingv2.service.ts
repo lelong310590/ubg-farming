@@ -35,7 +35,7 @@ export class StakingServiceV2 {
                 }, value)
 
                 let totalPoolAmount = SmcService.configs.SMC_UBG_TOKEN_ADDRESS === packageRes.tokenAddress ? fetchTotalPoolAmount / 1e9 : fetchTotalPoolAmount / 1e18
-                let interestYear = SmcService.configs.SMC_UBG_TOKEN_ADDRESS === packageRes.tokenAddress ? packageRes.interestSec / 1e9 * 86400 * 365 : packageRes.interestSec / 1e18 * 86400 * 365
+                let interestYear = SmcService.configs.SMC_UBG_TOKEN_ADDRESS === packageRes.tokenAddress ? packageRes.interestSec / 1e9 * 86400 * 30 : packageRes.interestSec / 1e18 * 86400 * 30
 
                 let abr = totalPoolAmount === 0 ? 0 : interestYear/totalPoolAmount * 100
 

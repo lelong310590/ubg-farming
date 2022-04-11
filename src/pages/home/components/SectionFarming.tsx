@@ -28,6 +28,8 @@ export const SectionFarming: FC = () => {
 
 const Form: FC = () => {
 	const smc = useSelector(s => s.smc);
+	const lang = useSelector(state => state.app.lang);
+
 	const [isFetched, setIsFetched] = useState(false);
 	const [balance, setBalance] = useState(null as null | number);
 	const [packages, setPackages] = useState(null as null | any);
@@ -65,7 +67,7 @@ const Form: FC = () => {
 		fields: {
 			amount: {
 				isRequired: true,
-				label: 'Enter your amount to farm',
+				label: lang.enter_your_amount_to_earn,
 				validate: validateAmount,
 			}
 			// packageId: {
@@ -110,7 +112,7 @@ const Form: FC = () => {
 							fetchCalculateFarm(selectedPool.id)
 							fetchTotalClaim(selectedPool.id)
 							setShowPoolDetail(false)
-							SmcService.transactionSuccessAlert(res, 'Farm successfully.');
+							SmcService.transactionSuccessAlert(res, lang.farm_success);
 						})
 						.catch(async (err) => {
 							setShowPoolDetail(false)
@@ -220,13 +222,13 @@ const Form: FC = () => {
 			// case '1':
 			// 	return 'Farm UBG - 24 hours'
 			case '2':
-				return 'Farm UBG - 6 months'
+				return 'Farm UBG - ' + lang.t6month
 			case '3':
-				return 'Farm UBG - 12 months'
+				return 'Farm UBG - ' + lang.t12month
 			case '4':
-				return 'Farm UBG - 24 months'
+				return 'Farm UBG - ' + lang.t24month
 			case '5':
-				return 'Farm UBG - 36 months'
+				return 'Farm UBG - ' + lang.t36month
 			case '6':
 				return 'Farm UBG-BUSD'
 			case '7':
@@ -297,7 +299,7 @@ const Form: FC = () => {
 				setIsWithdraw(false);
 				fetchCalculateFarm(selectedPool.id)
 				fetchTotalClaim(selectedPool.id)
-				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
+				SmcService.transactionSuccessAlert(res, lang.claim_success);
 			})
 			.catch(async (err) => {
 				console.log('err: ', err)
@@ -320,7 +322,7 @@ const Form: FC = () => {
 				setIsClaiming(false);
 				fetchCalculateFarm(selectedPool.id)
 				fetchTotalClaim(selectedPool.id)
-				SmcService.transactionSuccessAlert(res, 'Claim successfully.');
+				SmcService.transactionSuccessAlert(res, lang.claim_success);
 			})
 			.catch(async (err) => {
 				console.log('err: ', err)
@@ -452,16 +454,16 @@ const Form: FC = () => {
 						<Fragment>
 							<div className="pool-background">
 								<div className="pool-item">
-									<div className="pool-item-title">Pool {getNameById(selectedPool.id)} Info</div>
+									<div className="pool-item-title">{lang.pool} {getNameById(selectedPool.id)} {lang.info}</div>
 									<div className="pool-item-info">
 										<img src="./images/pool.png" alt="" className="img-fluid"/>
 										<div className="UserBalance pool-item-user-balance">
 											<span className="icon"><Icon.Wallet /></span>
-											<span className="label">Your balance:</span>
+											<span className="label">{lang.your_balance}</span>
 											<span className="value">{showUserBalance()}</span>
 										</div>
 										<div className="pool-item-info-row">
-											<div className="pool-item-info-label">Min Deposit: </div>
+											<div className="pool-item-info-label">{lang.min_deposit} </div>
 											{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
 												<div className="pool-item-info-value">{NumberUtils.cryptoConvert('decode', selectedPool.minFarm, 9)} UBG</div>
 											) : (
@@ -469,23 +471,23 @@ const Form: FC = () => {
 											)}
 										</div>
 										<div className="pool-item-info-row">
-											<div className="farming-pool-label">End Time: </div>
-											<div className="farming-pool-value">{selectedPool.endTime > 0 ? showHumanTime(selectedPool.endTime) : 'Endless'}</div>
+											<div className="farming-pool-label">{lang.end_time}</div>
+											<div className="farming-pool-value">{selectedPool.endTime > 0 ? showHumanTime(selectedPool.endTime) : lang.endless}</div>
 										</div>
 										<div className="pool-item-info-row">
-											<div className="farming-pool-label">Without Unlock: </div>
-											<div className="farming-pool-value">{selectedPool.endTime > 0 ? Math.round(Math.abs(new Date().getTime() - selectedPool.endTime) / 1000 / 60 / 60/ 24) + ' day(s)' : 'Endless'}</div>
+											<div className="farming-pool-label">{lang.reward}</div>
+											<div className="farming-pool-value">{showAward(selectedPool)} {lang.ubg_day}</div>
 										</div>
 										{calculateFarm !== null &&
 											<Fragment>
 												{calculateFarm[0] > 0 &&
 													<Fragment>
 														<div className="pool-item-info-row pool-award">
-															<div className="farming-pool-label">Your reward:  </div>
-															<div className="farming-pool-value">{(calculateFarm[0]) / 1e9} UBG</div>
+															<div className="farming-pool-label">{lang.reward}</div>
+															<div className="farming-pool-value">{(calculateFarm[0] - totalClaim) / 1e9} UBG</div>
 														</div>
 														<div className="pool-item-info-row pool-award">
-															<div className="farming-pool-label">Your deposit: </div>
+															<div className="farming-pool-label">{lang.your_deposit}</div>
 															{selectedPool.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
 																<div className="farming-pool-value">{(calculateFarm[1]) / 1e9} UBG</div>
 															) : (
@@ -502,7 +504,7 @@ const Form: FC = () => {
 												{function () {
 													if (smc.error) return
 													if (smc.status === ESMCStatus.NONE) return;
-													if (smc.status !== ESMCStatus.READY) return <Button label="Connect Wallet" buttonType="warning" onClick={() => connectWallet()} />
+													if (smc.status !== ESMCStatus.READY) return <Button label={lang.connect_wallet} buttonType="warning" onClick={() => connectWallet()} />
 													let checkPoolTime = new Date().getTime() > selectedPool.endTime
 													// console.log('new Date: ', new Date().getTime())
 													// console.log('selectedPool.endTime: ', selectedPool.endTime)
@@ -512,12 +514,12 @@ const Form: FC = () => {
 														if (calculateFarm[0] > 0) {
 															return (
 																<Fragment>
-																	<Button isLoading={isSubmitting} type="submit" label="Continue Farm" />
+																	<Button isLoading={isSubmitting} type="submit" label={lang.continue_farm} />
 
-																	<Button isLoading={isClaiming} className="claim-button" onClick={() => claim()} type="button"  label="Claim" />
+																	<Button isLoading={isClaiming} className="claim-button" onClick={() => claim()} type="button"  label={lang.claim} />
 
 																	{checkPoolTime &&
-																		<Button className="claim-button" isLoading={isWithdraw} onClick={() => withdraw()} type="button" label="Withdraw" />
+																		<Button className="claim-button" isLoading={isWithdraw} onClick={() => withdraw()} type="button" label={lang.withdraw} />
 																	}
 																</Fragment>
 															)
@@ -529,7 +531,7 @@ const Form: FC = () => {
 													}
 												}()}
 
-												<Button className="close-button" onClick={() => closePoolDetail()} type="button" label="Close" />
+												<Button className="close-button" onClick={() => closePoolDetail()} type="button" label={lang.close} />
 											</div>
 										</div>
 
@@ -557,7 +559,7 @@ const Form: FC = () => {
 					<div className="col-12">
 						<div className='pool-group-type'>
 							<div className="pool-group-title">
-								Farm UBG earn UBG
+								{lang.ubg_earn_ubg}
 							</div>
 							<div className='row'>
 								{_.map(packages, (p, i) => {
@@ -572,7 +574,7 @@ const Form: FC = () => {
 															{getNameById(p.id)}
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">Min Deposit: </div>
+															<div className="farming-pool-label">{lang.min_deposit} </div>
 
 															{p.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
 																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 9)} UBG</div>
@@ -582,8 +584,8 @@ const Form: FC = () => {
 
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">End Time: </div>
-															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : 'Endless'}</div>
+															<div className="farming-pool-label">{lang.end_time} </div>
+															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : lang.endless}</div>
 														</div>
 														<div className="farming-pool-info-item">
 															<div className="farming-pool-label">Reward: </div>
@@ -595,11 +597,11 @@ const Form: FC = () => {
 														</div>
 
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">APR: </div>
+															<div className="farming-pool-label">{lang.apr} </div>
 															{p.endTime !== 0 ? (
-																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
+																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : '5%'}</div>
 															) : (
-																<div className="farming-pool-value">N/A</div>
+																<div className="farming-pool-value">5%</div>
 															)}
 														</div>
 														{/* <div className="farming-pool-info-item">
@@ -616,7 +618,7 @@ const Form: FC = () => {
 														</div> */}
 
 														<div className="farming-pool-action">
-															<Button type="button" onClick={() => joinPool(p.id)} label="Join Pool" />
+															<Button type="button" onClick={() => joinPool(p.id)} label={lang.join_pool} />
 														</div>
 													</div>
 												</div>
@@ -630,7 +632,7 @@ const Form: FC = () => {
 
 						<div className='pool-group-type'>
 							<div className="pool-group-title">
-								Farm LP earn UBG
+								{lang.lp_earn_ubg}
 							</div>
 							<div className='row'>
 								{_.map(packages, (p, i) => {
@@ -645,7 +647,7 @@ const Form: FC = () => {
 															{getNameById(p.id)}
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">Min Deposit: </div>
+															<div className="farming-pool-label">{lang.min_deposit} </div>
 															{p.tokenAddress === SmcService.configs.SMC_UBG_TOKEN_ADDRESS ? (
 																<div className="farming-pool-value">{NumberUtils.cryptoConvert('decode', p.minFarm, 9)} UBG</div>
 															) : (
@@ -653,23 +655,23 @@ const Form: FC = () => {
 															)}
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">End Time: </div>
-															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : 'Endless'}</div>
+															<div className="farming-pool-label">{lang.end_time} </div>
+															<div className="farming-pool-value">{p.endTime > 0 ? showHumanTime(p.endTime) : lang.endless}</div>
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">Reward: </div>
-															<div className="farming-pool-value">{showAward(p)} UBG / day</div>
+															<div className="farming-pool-label">{lang.reward} </div>
+															<div className="farming-pool-value">{showAward(p)} {lang.ubg_day}</div>
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">Pool Holder : </div>
+															<div className="farming-pool-label">{lang.pool_holder}</div>
 															<div className="farming-pool-value">{p.totalAmount} {SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? ' UBG' : ' LP'}</div>
 														</div>
 														<div className="farming-pool-info-item">
-															<div className="farming-pool-label">APR: </div>
+															<div className="farming-pool-label">{lang.apr}</div>
 															{p.endTime !== 0 ? (
-																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : 'N/A'}</div>
+																<div className="farming-pool-value">{SmcService.configs.SMC_UBG_TOKEN_ADDRESS === p.tokenAddress ? p.abr + ' %' : '5%'}</div>
 															) : (
-																<div className="farming-pool-value">N/A</div>
+																<div className="farming-pool-value">5%</div>
 															)}
 														</div>
 														{/* <div className="farming-pool-info-item">
@@ -686,7 +688,7 @@ const Form: FC = () => {
 														</div> */}
 
 														<div className="farming-pool-action">
-															<Button type="button" onClick={() => joinPool(p.id)} label="Join Pool" />
+															<Button type="button" onClick={() => joinPool(p.id)} label={lang.join_pool} />
 														</div>
 													</div>
 												</div>

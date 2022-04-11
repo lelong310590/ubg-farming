@@ -1,20 +1,54 @@
-import { FC } from 'react'
-import { Element } from 'react-scroll'
+import {FC, useState, useEffect} from 'react'
+import {Element} from 'react-scroll'
+import language from './../../../../lang/lang.json'
+import {useStore} from 'react-redux'
+import {useSelector} from '../../../AppStores'
+import {SET_APP_LANGUAGE} from "../../../services/app/app.reducer";
+import {AppService} from "../../../services";
 
 export const SectionHead: FC = () => {
-  return (
-    <Element name="SectionHead">
-      <section className="SectionHead">
-        <div className="container">
-          <div className="banner">
-            <div className="info">
-              <h1 className="sectionTitle">UBG Token was borned for a mission:</h1>
-              <p className="sectionExcerpt">UBG Token was borned for a mission: Breaking through all limits of Payment by Crypto Currencies wherever and whenever. We create a new payment method for E- Commercial and Travel, making it faster, transparent, profitable, secure and great in future..</p>
-            </div>
-            <img src="/images/head.png" alt="" />
-          </div>
-        </div>
-      </section>
-    </Element>
-  )
+
+    const store = useStore();
+    const lang = useSelector(state => state.app.lang)
+
+    const changeLang = (selectedLang) => {
+        if (selectedLang === 'en') {
+            AppService.setLang(language.en, store)
+        } else {
+            AppService.setLang(language.vi, store)
+        }
+
+        sessionStorage.setItem('language', selectedLang);
+    }
+
+    useEffect(() => {
+        let sessionLang = sessionStorage.getItem('language');
+        if (sessionLang !== null) {
+            if (sessionLang === 'en') {
+                AppService.setLang(language.en, store)
+            } else {
+                AppService.setLang(language.vi, store)
+            }
+        }
+    })
+
+    return (
+        <Element name="SectionHead">
+            <section className="SectionHead">
+                <div className="container">
+                    <div className="banner">
+                        <div className="info">
+                            <div className="info-change-language">
+                                <a onClick={() => changeLang('en')}>English</a>
+                                <a onClick={() => changeLang('vi')}>Vietnamese</a>
+                            </div>
+                            <h1 className="sectionTitle">{lang.hero_title}</h1>
+                            <p className="sectionExcerpt">{lang.hero_excerpt}</p>
+                        </div>
+                        <img src="/images/head.png" alt=""/>
+                    </div>
+                </div>
+            </section>
+        </Element>
+    )
 }

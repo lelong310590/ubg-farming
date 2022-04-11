@@ -13,6 +13,25 @@
 				max-width: 100%;
 				width: 600px;
 			}
+			
+			.info-change-language {
+				border: 1px solid #222;
+				padding: 10px;
+				border-radius: 5px;
+				display: inline-flex;
+				margin-bottom: 25px;
+				a {
+					padding: 0 15px;
+					text-decoration: none;
+					cursor: pointer;
+					&:hover {
+						color: blue
+					}
+					&:first-child {
+						border-right: 1px solid #ccc;
+					}
+				}
+			}
 		}
 		
 		.numberReports {
@@ -45,7 +64,6 @@
 		.SectionHead {
 			padding-top: 30px;
 			padding-bottom: 10px;
-			
 			.banner {
 				display: block;
 				padding: 15px;
