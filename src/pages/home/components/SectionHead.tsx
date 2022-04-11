@@ -3,7 +3,6 @@ import {Element} from 'react-scroll'
 import language from './../../../../lang/lang.json'
 import {useStore} from 'react-redux'
 import {useSelector} from '../../../AppStores'
-import {SET_APP_LANGUAGE} from "../../../services/app/app.reducer";
 import {AppService} from "../../../services";
 
 export const SectionHead: FC = () => {
