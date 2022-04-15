@@ -42,7 +42,7 @@ export const SectionHead: FC = () => {
                                 <a onClick={() => changeLang('vi')}>Vietnamese</a>
                             </div>
                             <h1 className="sectionTitle">{lang.hero_title}</h1>
-                            <p className="sectionExcerpt">{lang.hero_excerpt}</p>
+                            <p className="sectionExcerpt" dangerouslySetInnerHTML={{ __html: lang.hero_excerpt }}/>
                         </div>
                         <img src="/images/head.png" alt=""/>
                     </div>
